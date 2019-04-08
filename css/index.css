@@ -1,6 +1,7 @@
 .slide-wrap {
   width: 150px;
   height: 50px;
+  position: relative;
 }
 .slide-wrap .slide-bar {
   width: 100%;
@@ -10,18 +11,35 @@
   border-radius: 50px;
   text-align: center;
   line-height: 50px;
-  position: relative;
   box-shadow: 1px 1px 10px #888888;
   font-size: 10px;
   text-shadow: gray 1px 0 10px;
   letter-spacing: 1px;
 }
-.slide-wrap .slide-bar .slide-block {
+.slide-wrap .slide-block {
   height: 100%;
   width: 50px;
   border-radius: 50px;
   background-color: white;
   background-image: url(../img/youjiantou.png);
+  background-position: center;
+  background-size: 25px 25px;
+  background-repeat: no-repeat;
+  box-shadow: 0px 0px 0px #888888;
+  position: absolute;
+  left: 0;
+  top: 0;
+  transition: left 0.1s linear;
+}
+.slide-wrap .slide-block-icon {
+  width: 50%;
+}
+.loading-img {
+  height: 100%;
+  width: 50px;
+  border-radius: 50px;
+  background-color: white;
+  background-image: url(../img/jiazai.png);
   background-position: center;
   background-size: 25px 25px;
   background-repeat: no-repeat;
@@ -31,6 +49,14 @@
   top: 0;
   transition: left 0 linear;
 }
-.slide-wrap .slide-bar .slide-block-icon {
-  width: 50%;
+.action {
+  animation: loading 1s linear 0.1s infinite;
+}
+@keyframes loading {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(359deg);
+  }
 }
