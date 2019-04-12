@@ -10,16 +10,20 @@
 <body>
     <div class="slide-wrap" id="slide-wrap">
         <div class="slide-bar" id="slide-bar">
-            <!-- <img class="slide-block-icon" src="./img/youjiantou.png" alt=""> -->
             <span class="slide-text">请滑动以解锁</span> 
         </div>
-        <div class="slide-block" >
-        </div>
+        <div class="slide-block" id="slide-block"></div>
     </div>
     <script src="./js/index.js"></script>
     <script>
     let slide = new SlideButton(150,50,'请滑动登录')
     slide.init()
+    slide.loading = function(){
+        var self = this
+        setTimeout(function(){
+            self.isFail()
+        },2000)
+    }
     </script>
     
 </body>
