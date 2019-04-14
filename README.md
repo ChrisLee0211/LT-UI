@@ -36,21 +36,28 @@
 - 进一步优化逻辑，找出更多bug
 - 考虑是否暴露点触、滑动、加载中三个生命周期的钩子
 
+### 2019.04.14:
+- 进一步封装，隐藏dom结构细节。
+- 现在引用组件只需3行代码即可，类ElementUI在Vue上的体验
+- 为类名、组件方法设置好自定义前缀(lt)，为以后组件系列化做铺垫(下一步尝试制作更多移动端的组件)
+
+待完成功能：
+- 打包压缩css，将图片base64处理
+- 解决同一页面创建多个组件但只有第一个生效的bug
+- 释放滑动前、滑动中的生命周期钩子函数供使用
+
 ## 使用方法：
 一、引入`js`、`css`文件，并且目前需要把图片文件也放到项目根目录下（后期会改进这个做法）  
-二、根据以下示例，设置好相应的class类名和html结构：
+二、根据以下示例使用：
 ```html
-<div class="slide-wrap" id="slide-wrap">
-        <div class="slide-bar" id="slide-bar">
-            <span class="slide-text">请滑动以解锁</span> 
-        </div>
-        <div class="slide-block" id="slide-block"></div>
-    </div>
+<body>
+    <lt-slide-button></lt-slide-button>
     <script src="./js/index.js"></script>
     <script>
     let slide = new SlideButton(150,50,'请滑动登录')
     slide.init()
     </script>
+</body>
 ```
 三、可设置属性与方法  
 
