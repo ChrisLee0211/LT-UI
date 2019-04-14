@@ -11,8 +11,38 @@ var SlideButton = /** @class */ (function () {
     }
     // 初始化各个部分的样式和绑定事件
     SlideButton.prototype.init = function () {
+        this.createDom();
         this.reset(); //重置样式
         this.slideEvent(); //绑定滑动事件
+    };
+    // 创建元素
+    SlideButton.prototype.createDom = function () {
+        var button = document.getElementsByTagName('lt-slide-button');
+        console.log(button);
+        // 滑块背景
+        var slide_wrap = document.createElement('div');
+        slide_wrap.setAttribute('id', 'slide-wrap');
+        slide_wrap.className = 'slide-wrap';
+        // 滑动条
+        var slide_bar = document.createElement('div');
+        slide_bar.setAttribute('id', 'slide-bar');
+        slide_bar.className = 'slide-bar';
+        // 滑动条文本
+        var slide_text = document.createElement('span');
+        slide_text.setAttribute('id', 'slide-text');
+        slide_text.className = "slide-text";
+        // 滑块
+        var slide_block = document.createElement('div');
+        slide_block.setAttribute('id', 'slide-block');
+        slide_block.className = 'slide-block';
+        var fragment = document.createDocumentFragment();
+        slide_bar.appendChild(slide_text);
+        slide_wrap.appendChild(slide_bar);
+        slide_wrap.appendChild(slide_block);
+        fragment.appendChild(slide_wrap);
+        for (var i = 0; i < button.length; i++) {
+            button[i].appendChild(fragment);
+        }
     };
     //重置样式
     SlideButton.prototype.reset = function () {

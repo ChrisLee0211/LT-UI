@@ -20,8 +20,40 @@ class SlideButton implements Params {
 
     // 初始化各个部分的样式和绑定事件
     init(): void {
+        this.createDom()
         this.reset() //重置样式
         this.slideEvent() //绑定滑动事件
+    }
+
+    // 创建元素
+    createDom():void{
+        let button = document.getElementsByTagName('lt-slide-button')
+    console.log(button)
+    // 滑块背景
+    let slide_wrap:HTMLElement = document.createElement('div');
+    slide_wrap.setAttribute('id','slide-wrap');
+    slide_wrap.className = 'slide-wrap';
+    // 滑动条
+    let slide_bar:HTMLElement = document.createElement('div');
+    slide_bar.setAttribute('id','slide-bar');
+    slide_bar.className = 'slide-bar';
+    // 滑动条文本
+    let slide_text:HTMLElement = document.createElement('span');
+    slide_text.setAttribute('id','slide-text');
+    slide_text.className = "slide-text"
+    // 滑块
+    let slide_block:HTMLElement = document.createElement('div');
+    slide_block.setAttribute('id','slide-block');
+    slide_block.className = 'slide-block'
+
+    let fragment = document.createDocumentFragment()
+    slide_bar.appendChild(slide_text);
+    slide_wrap.appendChild(slide_bar);
+    slide_wrap.appendChild(slide_block);
+    fragment.appendChild(slide_wrap);
+    for(let i = 0; i < button.length; i++){
+        button[i].appendChild(fragment)
+    }
     }
 
     //重置样式
