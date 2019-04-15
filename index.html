@@ -8,11 +8,25 @@
     <title>Document</title>
 </head>
 <body>
-    <lt-slide-button></lt-slide-button>
+    <lt-slide-button id="LT"></lt-slide-button>
+    <br/>
+    <lt-slide-button id="lee"></lt-slide-button>
     <script src="./js/index.js"></script>
     <script>
-    let slide = new SlideButton(150,50,'请滑动登录')
+    let slide = new SlideButton(150,50,'请滑动登录','LT')
+    let slide_B = new SlideButton(150,50,'请滑动登录','lee')
     slide.init()
+    slide.loading = () =>{
+        setTimeout(()=>{
+            slide.isPass()
+        },1000)
+    }
+    slide_B.init()
+        slide_B.loading = () =>{
+            setTimeout(()=>{
+                slide_B.isFail()
+            },1000)
+        }
     </script>
 </body>
 </html>
