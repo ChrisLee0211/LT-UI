@@ -46,34 +46,43 @@
 - 解决同一页面创建多个组件但只有第一个生效的bug
 - 释放滑动前、滑动中的生命周期钩子函数供使用
 
+### 2019.04.16:
+- 增加传入id值作为区分，解决一个页面创建多个组件时只有一个组件生效的bug。
+- 修复调用`isPass()`后滑块依然能滑动的bug
+
+待完成功能：
+- 打包压缩css，将图片base64处理
+- 释放滑动前、滑动中的生命周期钩子函数供使用
+
 ## 使用方法：
 一、引入`js`、`css`文件，并且目前需要把图片文件也放到项目根目录下（后期会改进这个做法）  
 二、根据以下示例使用：
 ```html
 <body>
-    <lt-slide-button></lt-slide-button>
+    <lt-slide-button id="LT"></lt-slide-button>
     <script src="./js/index.js"></script>
     <script>
-    let slide = new SlideButton(150,50,'请滑动登录')
-    slide.init()
+    let slide = new SlideButton(150,50,'请滑动登录','LT')
+    slide.init() //实例化该组件，之后只需要在自己的表单验证逻辑中使用loading()的钩子，配合isPass()和isFail()来判断成功或失败即可
     </script>
 </body>
 ```
 三、可设置属性与方法  
 
-属性：（实例化中传入的参数如:`let slide = new SlideButton(width,height,desc)`）
+属性：（实例化中传入的参数如:`let slide = new SlideButton(width,height,desc,id)`）
 
 |    属性名  | 类型        |        描述 |
 | ---------- | -----------| ----------- |
 | width      |    number  | 整个滑动条的宽度 |
 | height     |     number | 整个滑动条的高度 |
 | desc       |     string | 滑动条内文本内容 |
+| id       |     string | 该组件的id值 |
 
 方法：可通过实例调用,用于改变组件样式以符合当前状态  
 
 | 方法 | 传入参数 | 返回参数 |   描述      |
 | ----------  | -----------| ----------- | ----------- |
-| init() | width、height、desc | 无 | 用于初始化组件 |
+| init() | width、height、desc、id | 无 | 用于初始化组件 |
 | isPass() | 无 | 无 | 用于加载成功时显示成功的样式 |
 | isFail() | 无  | 无 | 用于加载失败时显示失败的样式，并重置组件 |
 
