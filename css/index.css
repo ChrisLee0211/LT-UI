@@ -18,15 +18,13 @@
   transition: transform .5s linear;
 }
 .slide-wrap .slide-block {
-  height: 100%;
+  height: 50px;
   width: 50px;
+  text-align: center;
+  line-height: 50px;
   border-radius: 50px;
   background: white;
-  background-color: white;
-  background-image: url(../img/youjiantou.png);
-  background-position: center;
-  background-size: 50% 50%;
-  background-repeat: no-repeat;
+  color: lightgreen;
   box-shadow: 0px 0px 0px #888888;
   position: absolute;
   left: 0;
@@ -37,29 +35,19 @@
   width: 50%;
 }
 .loading {
-  height: 100%;
-  width: 50px;
   border-radius: 50px;
-  background-color: white;
-  background-image: url(../img/jiazai.png);
-  background-position: center;
-  background-size: 50% 50%;
-  background-repeat: no-repeat;
   box-shadow: 1px 1px 10px #888888;
   position: absolute;
   left: 0;
   top: 0;
+  text-align: center;
   transition: left 0 linear;
 }
 .success {
-  height: 100%;
-  width: 50px;
   border-radius: 50px;
   background-color: white;
-  background-image: url(../img/success_no_circle.png);
-  background-size: 50% 50%;
-  background-position: center;
-  background-repeat: no-repeat;
+  color: lightgreen;
+  text-align: center;
   box-shadow: 1px 1px 10px #888888;
   position: absolute;
   left: 0;
@@ -67,19 +55,14 @@
   transition: background-size 0.5s linear;
 }
 .fail {
-  height: 100%;
-  width: 50px;
-  border-radius: 50px;
   background-color: white;
-  background-image: url(../img/cuowu.png);
-  background-size: 25% 25%;
-  background-position: center;
-  background-repeat: no-repeat;
+  color: red;
+  border-radius: 50px;
+  text-align: center;
   box-shadow: 1px 1px 10px #888888;
   position: absolute;
   left: 0;
   top: 0;
-  transition: background-size 0.5s linear;
 }
 .active {
   transform: scale(0, 0);

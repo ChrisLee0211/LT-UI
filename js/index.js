@@ -20,6 +20,12 @@ var SlideButton = /** @class */ (function () {
     // 创建元素
     SlideButton.prototype.createDom = function () {
         var button = document.getElementById(this.id);
+        var link = document.createElement('link');
+        link.type = 'text/css';
+        link.rel = 'stylesheet';
+        link.href = "./font-awesome-4.7.0/css/font-awesome.min.css";
+        var head = document.getElementsByTagName('head')[0];
+        head.appendChild(link);
         // 滑块背景
         var slide_wrap = document.createElement('div');
         slide_wrap.setAttribute('id', this.id + 'slide-wrap');
@@ -33,9 +39,12 @@ var SlideButton = /** @class */ (function () {
         slide_text.setAttribute('id', this.id + 'slide-text');
         slide_text.className = "slide-text";
         // 滑块
-        var slide_block = document.createElement('div');
+        // let slide_block: HTMLElement = document.createElement('div');
+        // slide_block.setAttribute('id', this.id + 'slide-block');
+        // slide_block.className = 'slide-block'
+        var slide_block = document.createElement('i');
         slide_block.setAttribute('id', this.id + 'slide-block');
-        slide_block.className = 'slide-block';
+        slide_block.className = 'fa fa-chevron-right fa-lg slide-block';
         var fragment = document.createDocumentFragment();
         slide_bar.appendChild(slide_text);
         slide_wrap.appendChild(slide_bar);
@@ -53,7 +62,7 @@ var SlideButton = /** @class */ (function () {
         var slide_block = document.querySelector('#' + this.id + 'slide-block');
         var slide_text = document.querySelector('#' + this.id + 'slide-text');
         slide_bar.className = 'slide-bar';
-        slide_block.className = 'slide-block';
+        slide_block.className = 'fa fa-chevron-right fa-lg slide-block';
         slide_text.className = 'slide-text';
         slide_wrap.style.width = this.width + 'px';
         slide_wrap.style.height = this.height + 'px';
@@ -76,17 +85,11 @@ var SlideButton = /** @class */ (function () {
             self.isTouch = true;
             slide_block.style.backgroundColor = "#f6f3f3";
             slide_block.style.transition = "left 0s linear";
-            // let middle: string = ((self.width / 2 - self.height) + self.height / 2) + 'px'
-            // if (slide_block.style.left == middle) {
-            //     self.isTouch = false
-            // } else {
-            //     self.isTouch = true;
-            // }
         });
         // 手势滑动：计算左右边界
         slide_block.addEventListener('touchmove', function (e) {
             var curX = e.touches[0].pageX;
-            if (self.isOver == false) {
+            if (self.isOver == false) { //判定是否已经完成了一次滑动并且成功，防止成功后被继续拖动
                 e.target.style.left = (parseInt(curX) - self.height / 2) + "px";
                 var lastMove = parseInt(e.target.style.left);
                 if (lastMove < 0) {
@@ -100,13 +103,12 @@ var SlideButton = /** @class */ (function () {
         });
         // 手势离开，判定是否到最右
         slide_block.addEventListener('touchend', function (e) {
-            if (self.isOver == false) {
+            if (self.isOver == false) { //判定是否已经完成了一次滑动并且成功，防止成功后被继续拖动
                 if (parseInt(e.target.style.left) >= slide_max) {
                     self.isSuccess = true;
                     self.success();
                 }
                 else {
-                    e.target.style.color = "lightgreen";
                     e.target.style.left = 0;
                 }
             }
@@ -117,20 +119,16 @@ var SlideButton = /** @class */ (function () {
     // 请求成功的方法
     SlideButton.prototype.isPass = function () {
         var slide_block = document.querySelector('#' + this.id + 'slide-block');
-        slide_block.className = 'success';
+        slide_block.className = 'fa fa-check fa-lg success';
+        // 一旦请求成功，即判定为整个滑动条的动画完成，不再提供滑动（ps：这个逻辑主要用于请求成功后锁定滑块）
         this.isOver = true;
-        //  slide_block.style.transition = "background-size .1s linear"
-        // setTimeout(function (): void {
-        //     slide_block.style.backgroundSize = "50% 50%"
-        // }, 1100)
     };
     // 请求失败的方法
     SlideButton.prototype.isFail = function () {
         var slide_bar = document.querySelector('#' + this.id + 'slide-bar');
         var slide_block = document.querySelector('#' + this.id + 'slide-block');
         var slide_text = document.querySelector('#' + this.id + 'slide-text');
-        slide_block.className = 'fail';
-        slide_block.style.backgroundSize = "50% 50%";
+        slide_block.className = 'fa fa-times fa-lg fail';
         var self = this;
         setTimeout(function () {
             self.reset();
@@ -152,9 +150,8 @@ var SlideButton = /** @class */ (function () {
         slide_text.innerHTML = '';
         slide_block.style.left = (slide_bar_length / 2 - slide_block_length / 2) + 'px';
         slide_bar.classList.add("active");
-        slide_block.className = 'loading';
+        slide_block.className = 'fa fa-cog fa-lg fa-spin fa-fw loading';
         slide_block.style.transition = "left .5s linear";
-        slide_block.classList.add("action");
         this.loading();
     };
     return SlideButton;

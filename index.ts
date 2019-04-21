@@ -33,7 +33,12 @@ class SlideButton implements Params {
     // 创建元素
     createDom(): void {
         let button: HTMLElement = document.getElementById(this.id) as HTMLElement
-
+        let link:any = document.createElement('link');
+        link.type = 'text/css';
+        link.rel = 'stylesheet';
+        link.href = "./font-awesome-4.7.0/css/font-awesome.min.css";
+        let head:HTMLElement = document.getElementsByTagName('head')[0] as HTMLElement;
+        head.appendChild(link)
         // 滑块背景
         let slide_wrap: HTMLElement = document.createElement('div');
         slide_wrap.setAttribute('id', this.id + 'slide-wrap');
@@ -47,9 +52,12 @@ class SlideButton implements Params {
         slide_text.setAttribute('id', this.id + 'slide-text');
         slide_text.className = "slide-text"
         // 滑块
-        let slide_block: HTMLElement = document.createElement('div');
+        // let slide_block: HTMLElement = document.createElement('div');
+        // slide_block.setAttribute('id', this.id + 'slide-block');
+        // slide_block.className = 'slide-block'
+        let slide_block: HTMLElement = document.createElement('i');
         slide_block.setAttribute('id', this.id + 'slide-block');
-        slide_block.className = 'slide-block'
+        slide_block.className = 'fa fa-chevron-right fa-lg slide-block'
 
         let fragment = document.createDocumentFragment()
         slide_bar.appendChild(slide_text);
@@ -69,7 +77,7 @@ class SlideButton implements Params {
         let slide_block: HTMLElement = document.querySelector('#' + this.id + 'slide-block') as HTMLElement;
         let slide_text: HTMLElement = document.querySelector('#' + this.id + 'slide-text') as HTMLElement;
         slide_bar.className = 'slide-bar';
-        slide_block.className = 'slide-block'
+        slide_block.className = 'fa fa-chevron-right fa-lg slide-block'
         slide_text.className = 'slide-text'
         slide_wrap.style.width = this.width + 'px';
         slide_wrap.style.height = this.height + 'px';
@@ -117,7 +125,6 @@ class SlideButton implements Params {
                     self.isSuccess = true;
                     self.success()
                 } else {
-                    e.target.style.color = "lightgreen"
                     e.target.style.left = 0
                 }
             }
@@ -129,7 +136,7 @@ class SlideButton implements Params {
     // 请求成功的方法
     isPass(): void {
         let slide_block: HTMLElement = document.querySelector('#' + this.id + 'slide-block') as HTMLElement;
-        slide_block.className = 'success';
+        slide_block.className = 'fa fa-check fa-lg success';
         // 一旦请求成功，即判定为整个滑动条的动画完成，不再提供滑动（ps：这个逻辑主要用于请求成功后锁定滑块）
         this.isOver = true;
     }
@@ -139,8 +146,7 @@ class SlideButton implements Params {
         let slide_bar: HTMLElement = document.querySelector('#' + this.id + 'slide-bar') as HTMLElement;
         let slide_block: HTMLElement = document.querySelector('#' + this.id + 'slide-block') as HTMLElement;
         let slide_text: HTMLElement = document.querySelector('#' + this.id + 'slide-text') as HTMLElement;
-        slide_block.className = 'fail';
-        slide_block.style.backgroundSize = "50% 50%";
+        slide_block.className = 'fa fa-times fa-lg fail';
         let self = this
         setTimeout(function (): void {
             self.reset()
@@ -164,9 +170,8 @@ class SlideButton implements Params {
         slide_text.innerHTML = '';
         slide_block.style.left = (slide_bar_length / 2 - slide_block_length / 2) + 'px'
         slide_bar.classList.add("active")
-        slide_block.className = 'loading'
+        slide_block.className = 'fa fa-cog fa-lg fa-spin fa-fw loading'
         slide_block.style.transition = "left .5s linear"
-        slide_block.classList.add("action")
         this.loading()
     }
 }
