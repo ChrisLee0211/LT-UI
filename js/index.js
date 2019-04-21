@@ -20,10 +20,11 @@ var SlideButton = /** @class */ (function () {
     // 创建元素
     SlideButton.prototype.createDom = function () {
         var button = document.getElementById(this.id);
+        // 添加font-awesome的cdn
         var link = document.createElement('link');
         link.type = 'text/css';
         link.rel = 'stylesheet';
-        link.href = "./font-awesome-4.7.0/css/font-awesome.min.css";
+        link.href = "http://cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css";
         var head = document.getElementsByTagName('head')[0];
         head.appendChild(link);
         // 滑块背景

@@ -33,12 +33,14 @@ class SlideButton implements Params {
     // 创建元素
     createDom(): void {
         let button: HTMLElement = document.getElementById(this.id) as HTMLElement
+        // 添加font-awesome的cdn
         let link:any = document.createElement('link');
         link.type = 'text/css';
         link.rel = 'stylesheet';
-        link.href = "./font-awesome-4.7.0/css/font-awesome.min.css";
+        link.href = "http://cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css";
         let head:HTMLElement = document.getElementsByTagName('head')[0] as HTMLElement;
         head.appendChild(link)
+
         // 滑块背景
         let slide_wrap: HTMLElement = document.createElement('div');
         slide_wrap.setAttribute('id', this.id + 'slide-wrap');
