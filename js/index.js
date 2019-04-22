@@ -68,6 +68,7 @@ var SlideButton = /** @class */ (function () {
         slide_wrap.style.width = this.width + 'px';
         slide_wrap.style.height = this.height + 'px';
         slide_block.style.width = this.height + 'px';
+        slide_block.style.height = this.height + 'px';
         slide_block.style.lineHeight = this.height + 'px';
         slide_block.style.left = '0px';
         slide_bar.style.lineHeight = this.height + 'px';
