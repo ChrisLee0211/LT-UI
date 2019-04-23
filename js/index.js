@@ -6,6 +6,7 @@ var SlideButton = /** @class */ (function () {
         this.isSuccess = false;
         this.isEnd = false;
         this.isOver = false;
+        this.isMove = false;
         this.width = width;
         this.height = height;
         this.id = id;

@@ -19,18 +19,19 @@
     let slide_B = new SlideButton(150,50,'请滑动登录','lee')
     slide.init()
     slide.loading = () =>{
-        setTimeout(()=>{
+        timer = setTimeout(()=>{
             slide.isPass()
         },1000)
+        
     }
     slide_B.init()
         slide_B.loading = () =>{
             setTimeout(()=>{
                 slide_B.isFail()
             },1000)
+        
         }
-
-    
+        
     </script>
 </body>
 </html>

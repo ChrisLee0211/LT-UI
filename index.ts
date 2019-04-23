@@ -16,6 +16,7 @@ class SlideButton implements Params {
     isSuccess: boolean = false;
     isEnd: boolean = false;
     isOver:boolean = false;
+    isMove:boolean = false;
     constructor(width: number, height: number, text: string, id: string) {
         this.width = width;
         this.height = height;
@@ -105,6 +106,7 @@ class SlideButton implements Params {
             slide_block.style.backgroundColor = "#f6f3f3";
             slide_block.style.transition = "left 0s linear"
         });
+
         // 手势滑动：计算左右边界
         slide_block.addEventListener('touchmove', function (e: any) {
             let curX: string = e.touches[0].pageX;
