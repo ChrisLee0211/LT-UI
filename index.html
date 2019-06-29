@@ -13,6 +13,7 @@
     <lt-slide-button id="LT"></lt-slide-button>
     <br/>
     <lt-slide-button id="lee"></lt-slide-button>
+    <lit-input id="input"></lit-input>
     <script src="./js/index.js"></script>
     <script>
     let slide = new SlideButton(200,70,'请滑动登录','LT')
@@ -31,7 +32,8 @@
             },1000)
         
         }
-        
+    let LT_input = new Input(180,30,'input','请输入密码')
+    LT_input.init()
     </script>
 </body>
 </html>

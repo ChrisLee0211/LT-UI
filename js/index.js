@@ -159,3 +159,45 @@ var SlideButton = /** @class */ (function () {
     };
     return SlideButton;
 }());
+var Input = /** @class */ (function () {
+    function Input(width, height, id, tips, type) {
+        this.width = width;
+        this.height = height;
+        this.id = id;
+        this.tips = tips;
+        this.type = type;
+    }
+    // 初始化
+    Input.prototype.init = function () {
+        this.createDom();
+    };
+    Input.prototype.createDom = function () {
+        var dom = document.getElementById(this.id);
+        var inputDom = document.createElement('input');
+        var labelDom = document.createElement('label');
+        labelDom.innerHTML = this.tips;
+        var inputID = this.id + 'input';
+        inputDom.setAttribute('id', inputID);
+        inputDom.style.width = this.width + 'px';
+        inputDom.style.height = this.height + 'px';
+        dom.appendChild(labelDom);
+        dom.appendChild(inputDom);
+        this.setStyle(dom, labelDom, inputDom);
+    };
+    Input.prototype.setStyle = function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+        var arr = args.slice();
+        var dom = arr[0];
+        var inputDom = arr[2];
+        var labelDom = arr[1];
+        var label_width = labelDom.offsetWidth;
+        dom.className = "inputBody";
+        inputDom.className = "inputStyle";
+        var labelStyle = "margin-right:20px;transform:translateX(" + (label_width + 40) + "px)";
+        labelDom.setAttribute('style', labelStyle);
+    };
+    return Input;
+}());

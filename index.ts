@@ -180,3 +180,57 @@ class SlideButton implements Params {
         this.loading()
     }
 }
+
+
+interface Input {
+    width:number,
+    height:number,
+    id:string,
+    tips:string,
+    type?:string,
+    init():void,
+    createDom():void
+}
+
+class Input implements Input {
+    width:number;
+    height:number;
+    id:string;
+    type?:string;
+    tips:string;
+    constructor(width:number,height:number,id:string,tips:string,type?:string){
+        this.width = width;
+        this.height = height;
+        this.id = id;
+        this.tips = tips;
+        this.type = type;
+    }
+    // 初始化
+    init():void{
+        this.createDom()
+    }
+    createDom():void{
+        let dom:HTMLElement = document.getElementById(this.id) as HTMLElement;
+        let inputDom:HTMLElement = document.createElement('input');
+        let labelDom:HTMLElement = document.createElement('label');
+        labelDom.innerHTML = this.tips;
+        let inputID:string = this.id + 'input';
+        inputDom.setAttribute('id',inputID);
+        inputDom.style.width = this.width + 'px';
+        inputDom.style.height = this.height + 'px';
+        dom.appendChild(labelDom);
+        dom.appendChild(inputDom);
+        this.setStyle(dom,labelDom,inputDom);
+    }
+    setStyle(...args:any){
+        let arr = [...args];
+        let dom:HTMLElement = arr[0];
+        let inputDom:HTMLElement = arr[2];
+        let labelDom:HTMLElement = arr[1];
+        let label_width:string|any = labelDom.offsetWidth;
+        dom.className = "inputBody";
+        inputDom.className = "inputStyle";
+        let labelStyle:string = `margin-right:20px;transform:translateX(${label_width+40}px)`
+        labelDom.setAttribute('style',labelStyle)
+    }
+}
