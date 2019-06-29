@@ -1,2 +1,3 @@
 /index.html
-/tsconfig.json
+./tsconfig.json
+*.html
