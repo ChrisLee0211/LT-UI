@@ -198,21 +198,29 @@ class Input implements Input {
     id:string;
     type?:string;
     tips:string;
+    dom?:HTMLElement;
+    labelDom?:HTMLElement;
+    inputDom?:HTMLElement;
     constructor(width:number,height:number,id:string,tips:string,type?:string){
         this.width = width;
         this.height = height;
         this.id = id;
         this.tips = tips;
         this.type = type;
+        this.init()
     }
     // 初始化
     init():void{
-        this.createDom()
+        this.createDom();
+        this.bindEvent();
     }
     createDom():void{
         let dom:HTMLElement = document.getElementById(this.id) as HTMLElement;
         let inputDom:HTMLElement = document.createElement('input');
-        let labelDom:HTMLElement = document.createElement('label');
+        let labelDom:HTMLElement = document.createElement('span');
+        if(this.type === 'password'){
+            inputDom.setAttribute('type','password')
+        }
         labelDom.innerHTML = this.tips;
         let inputID:string = this.id + 'input';
         inputDom.setAttribute('id',inputID);
@@ -221,6 +229,9 @@ class Input implements Input {
         dom.appendChild(labelDom);
         dom.appendChild(inputDom);
         this.setStyle(dom,labelDom,inputDom);
+        this.dom = dom;
+        this.labelDom = labelDom;
+        this.inputDom = inputDom
     }
     setStyle(...args:any){
         let arr = [...args];
@@ -232,5 +243,38 @@ class Input implements Input {
         inputDom.className = "inputStyle";
         let labelStyle:string = `margin-right:20px;transform:translateX(${label_width+40}px)`
         labelDom.setAttribute('style',labelStyle)
+    }
+    bindEvent():void{
+        let dom:HTMLElement = this.dom as HTMLElement;
+        let labelDom:HTMLElement = this.labelDom as HTMLElement;
+        let inputDom:HTMLElement = this.inputDom as HTMLElement;
+        
+        inputDom.addEventListener('focus',()=>{
+            inputDom.className = "inputStyle inputActive"
+            let labelStyle:string = `margin-right:20px;transform:translateX(0px)`;
+            labelDom.className = "inputLabel";
+            labelDom.setAttribute('style',labelStyle)
+        });
+        inputDom.addEventListener('blur',(e)=>{
+            let text:any|null =(<HTMLInputElement>e.target).value;
+            if(text === ''){
+                let labelStyle:string = `margin-right:20px;transform:translateX(${labelDom.offsetWidth+40}px)`
+                labelDom.setAttribute('style',labelStyle);
+                
+            }else{
+                
+            }
+            inputDom.className="inputStyle"
+        })
+        labelDom.addEventListener('mouseover',()=>{
+            inputDom.className = "inputStyle inputActive"
+        });
+        labelDom.addEventListener('mouseout',()=>{
+            inputDom.className = "inputStyle"
+        })
+        labelDom.addEventListener('click',()=>{
+            inputDom.className = "inputStyle inputActive";
+            inputDom.focus()
+        })
     }
 }

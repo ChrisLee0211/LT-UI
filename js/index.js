@@ -166,15 +166,20 @@ var Input = /** @class */ (function () {
         this.id = id;
         this.tips = tips;
         this.type = type;
+        this.init();
     }
     // 初始化
     Input.prototype.init = function () {
         this.createDom();
+        this.bindEvent();
     };
     Input.prototype.createDom = function () {
         var dom = document.getElementById(this.id);
         var inputDom = document.createElement('input');
-        var labelDom = document.createElement('label');
+        var labelDom = document.createElement('span');
+        if (this.type === 'password') {
+            inputDom.setAttribute('type', 'password');
+        }
         labelDom.innerHTML = this.tips;
         var inputID = this.id + 'input';
         inputDom.setAttribute('id', inputID);
@@ -183,6 +188,9 @@ var Input = /** @class */ (function () {
         dom.appendChild(labelDom);
         dom.appendChild(inputDom);
         this.setStyle(dom, labelDom, inputDom);
+        this.dom = dom;
+        this.labelDom = labelDom;
+        this.inputDom = inputDom;
     };
     Input.prototype.setStyle = function () {
         var args = [];
@@ -198,6 +206,37 @@ var Input = /** @class */ (function () {
         inputDom.className = "inputStyle";
         var labelStyle = "margin-right:20px;transform:translateX(" + (label_width + 40) + "px)";
         labelDom.setAttribute('style', labelStyle);
+    };
+    Input.prototype.bindEvent = function () {
+        var dom = this.dom;
+        var labelDom = this.labelDom;
+        var inputDom = this.inputDom;
+        inputDom.addEventListener('focus', function () {
+            inputDom.className = "inputStyle inputActive";
+            var labelStyle = "margin-right:20px;transform:translateX(0px)";
+            labelDom.className = "inputLabel";
+            labelDom.setAttribute('style', labelStyle);
+        });
+        inputDom.addEventListener('blur', function (e) {
+            var text = e.target.value;
+            if (text === '') {
+                var labelStyle = "margin-right:20px;transform:translateX(" + (labelDom.offsetWidth + 40) + "px)";
+                labelDom.setAttribute('style', labelStyle);
+            }
+            else {
+            }
+            inputDom.className = "inputStyle";
+        });
+        labelDom.addEventListener('mouseover', function () {
+            inputDom.className = "inputStyle inputActive";
+        });
+        labelDom.addEventListener('mouseout', function () {
+            inputDom.className = "inputStyle";
+        });
+        labelDom.addEventListener('click', function () {
+            inputDom.className = "inputStyle inputActive";
+            inputDom.focus();
+        });
     };
     return Input;
 }());
