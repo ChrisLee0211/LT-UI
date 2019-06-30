@@ -124,10 +124,10 @@
 # input
 一个文本提示动态的input框
 
-## 开发日志：
-
 ## 效果预览：
 ![IMAGE](https://github.com/ChrisLee0211/LT-UI/blob/master/preview/example02.gif)
+
+## 开发日志：
 
 ### 2019.06.29:
 - 初步完成输入框整体布局；
