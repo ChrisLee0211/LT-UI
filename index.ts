@@ -249,11 +249,13 @@ class Input implements Input {
         let labelDom:HTMLElement = this.labelDom as HTMLElement;
         let inputDom:HTMLElement = this.inputDom as HTMLElement;
         
-        inputDom.addEventListener('focus',()=>{
+        inputDom.addEventListener('focus',(e)=>{
             inputDom.className = "inputStyle inputActive"
             let labelStyle:string = `margin-right:20px;transform:translateX(0px)`;
             labelDom.className = "inputLabel";
-            labelDom.setAttribute('style',labelStyle)
+            labelDom.setAttribute('style',labelStyle);
+            let value:any = inputDom.innerHTML;
+            this.focus((<HTMLInputElement>e.target).value);
         });
         inputDom.addEventListener('blur',(e)=>{
             let text:any|null =(<HTMLInputElement>e.target).value;
@@ -264,7 +266,11 @@ class Input implements Input {
             }else{
                 
             }
-            inputDom.className="inputStyle"
+            this.blur(text);
+            inputDom.className="inputStyle";
+        })
+        inputDom.addEventListener('input',(e)=>{
+            this.change((<HTMLInputElement>e.target).value)
         })
         labelDom.addEventListener('mouseover',()=>{
             inputDom.className = "inputStyle inputActive"
@@ -277,4 +283,14 @@ class Input implements Input {
             inputDom.focus()
         })
     }
+    focus(val:any):any{
+        console.log(val)
+    }
+    change(val:any):any{
+        console.log(val)
+    }
+    blur(val:any):any{
+        console.log(val)
+    }
+    
 }

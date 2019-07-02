@@ -208,14 +208,17 @@ var Input = /** @class */ (function () {
         labelDom.setAttribute('style', labelStyle);
     };
     Input.prototype.bindEvent = function () {
+        var _this = this;
         var dom = this.dom;
         var labelDom = this.labelDom;
         var inputDom = this.inputDom;
-        inputDom.addEventListener('focus', function () {
+        inputDom.addEventListener('focus', function (e) {
             inputDom.className = "inputStyle inputActive";
             var labelStyle = "margin-right:20px;transform:translateX(0px)";
             labelDom.className = "inputLabel";
             labelDom.setAttribute('style', labelStyle);
+            var value = inputDom.innerHTML;
+            _this.focus(e.target.value);
         });
         inputDom.addEventListener('blur', function (e) {
             var text = e.target.value;
@@ -225,7 +228,11 @@ var Input = /** @class */ (function () {
             }
             else {
             }
+            _this.blur(text);
             inputDom.className = "inputStyle";
+        });
+        inputDom.addEventListener('input', function (e) {
+            _this.change(e.target.value);
         });
         labelDom.addEventListener('mouseover', function () {
             inputDom.className = "inputStyle inputActive";
@@ -237,6 +244,15 @@ var Input = /** @class */ (function () {
             inputDom.className = "inputStyle inputActive";
             inputDom.focus();
         });
+    };
+    Input.prototype.focus = function (val) {
+        console.log(val);
+    };
+    Input.prototype.change = function (val) {
+        console.log(val);
+    };
+    Input.prototype.blur = function (val) {
+        console.log(val);
     };
     return Input;
 }());
