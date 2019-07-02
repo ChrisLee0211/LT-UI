@@ -1,8 +1,18 @@
+这个仓库主要用来收藏一些自己平日心血来潮写的小组件，算是个人的组件库吧。
+
+
+## 目录
+### 一、表单类组件：
+* [1.滑块按钮](#slide-button)
+* [1.输入框](#input)
+
+
+
 # slide-button
 练习typescript顺便制作的一个滑块按钮，可以用移动端解锁、表单提交确认等场景
 
 ## 效果预览：
-![IMAGE](https://github.com/ChrisLee0211/slide-button/blob/master/example01.gif)
+![IMAGE](https://github.com/ChrisLee0211/LT-UI/blob/master/preview/example01.gif)
 
 ## 开发日志：
 
@@ -109,3 +119,53 @@
 |    钩子名称  | 参数        |        描述 |
 | ---------- | -----------| ----------- |
 | loading      |    无  | 当滑块成功滑到最右并松手时触发 |
+
+
+# input
+一个文本提示动态的input框
+
+## 效果预览：
+![IMAGE](https://github.com/ChrisLee0211/LT-UI/blob/master/preview/example02.gif)
+
+## 开发日志：
+
+### 2019.06.29:
+- 初步完成输入框整体布局；
+- 完成样式设置
+
+待完成功能：
+- 添加交互功能；
+- 完善性能以及提高可扩展性
+
+### 2019.06.30:
+- 添加了密码输入类型的判定；
+- 完成交互操作
+
+待完成功能：
+- 考虑暴露事件钩子；
+
+## 使用方法：
+一、引入`js`、`css`文件  
+二、根据以下示例使用：
+```html
+<body>
+    <lt-input id="input"></lt-input>
+    <lt-input id="pwd"></lt-input>
+    <script src="./js/index.js"></script>
+    <script>
+    let LT_input = new Input(180,30,'input','请输入用户名')
+    let LT_pwd = new Input(180,30,'pwd','请输入密码','password')
+    </script>
+</body>
+```
+三、可设置属性与方法  
+
+属性：（实例化中传入的参数如:`let input = new SlideButton(width,height,id,placeholder,type)`）
+
+|    属性名  | 类型        |        描述 |
+| ---------- | -----------| ----------- |
+| width      |    number  | 整个输入框的宽度 |
+| height     |     number | 整个输入框的高度 |
+| id       |     string | 该组件的id值 |
+| placeholder      |     string | 该输入框的提示 |
+| type       |     string | 非必须参数，当type为"password"时，输入框为密码密文模式 |
