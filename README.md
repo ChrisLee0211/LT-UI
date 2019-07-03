@@ -163,7 +163,7 @@
 ```
 三、可设置属性与方法  
 
-属性：（实例化中传入的参数如:`let input = new SlideButton(width,height,id,placeholder,type)`）
+属性：（实例化中传入的参数如:`let input = new Input(width,height,id,placeholder,type)`）
 
 |    属性名  | 类型        |        描述 |
 | ---------- | -----------| ----------- |
