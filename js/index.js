@@ -181,8 +181,7 @@ var Input = /** @class */ (function () {
             inputDom.setAttribute('type', 'password');
         }
         labelDom.innerHTML = this.tips;
-        var inputID = this.id + 'input';
-        inputDom.setAttribute('id', inputID);
+        inputDom.style.textIndent = '10px';
         inputDom.style.width = this.width + 'px';
         inputDom.style.height = this.height + 'px';
         dom.appendChild(labelDom);

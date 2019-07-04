@@ -222,8 +222,7 @@ class Input implements Input {
             inputDom.setAttribute('type','password')
         }
         labelDom.innerHTML = this.tips;
-        let inputID:string = this.id + 'input';
-        inputDom.setAttribute('id',inputID);
+        inputDom.style.textIndent = '10px';
         inputDom.style.width = this.width + 'px';
         inputDom.style.height = this.height + 'px';
         dom.appendChild(labelDom);
