@@ -1,3 +1,8 @@
+
+
+/**
+ * 滑块逻辑接口
+ */
 interface Params {
     width: number;
     height: number;
@@ -21,7 +26,8 @@ class SlideButton implements Params {
         this.width = width;
         this.height = height;
         this.id = id;
-        this.text = text
+        this.text = text;
+        this.init();
     }
 
     // 初始化各个部分的样式和绑定事件
@@ -44,23 +50,20 @@ class SlideButton implements Params {
 
         // 滑块背景
         let slide_wrap: HTMLElement = document.createElement('div');
-        slide_wrap.setAttribute('id', this.id + 'slide-wrap');
-        slide_wrap.className = 'slide-wrap';
+        slide_wrap.setAttribute('id', this.id + 'lt-slide-wrap');
+        slide_wrap.className = 'lt-slide-wrap';
         // 滑动条
         let slide_bar: HTMLElement = document.createElement('div');
-        slide_bar.setAttribute('id', this.id + 'slide-bar');
-        slide_bar.className = 'slide-bar';
+        slide_bar.setAttribute('id', this.id + 'lt-slide-bar');
+        slide_bar.className = 'lt-slide-bar';
         // 滑动条文本
         let slide_text: HTMLElement = document.createElement('span');
         slide_text.setAttribute('id', this.id + 'slide-text');
         slide_text.className = "slide-text"
         // 滑块
-        // let slide_block: HTMLElement = document.createElement('div');
-        // slide_block.setAttribute('id', this.id + 'slide-block');
-        // slide_block.className = 'slide-block'
         let slide_block: HTMLElement = document.createElement('i');
-        slide_block.setAttribute('id', this.id + 'slide-block');
-        slide_block.className = 'fa fa-chevron-right fa-lg slide-block'
+        slide_block.setAttribute('id', this.id + 'lt-slide-block');
+        slide_block.className = 'fa fa-chevron-right fa-lg lt-slide-block'
 
         let fragment = document.createDocumentFragment()
         slide_bar.appendChild(slide_text);
@@ -68,19 +71,16 @@ class SlideButton implements Params {
         slide_wrap.appendChild(slide_block);
         fragment.appendChild(slide_wrap);
         button.appendChild(fragment)
-        // for (let i = 0; i < button.length; i++) {
-        //     button[i].appendChild(fragment)
-        // }
     }
 
     //重置样式
     reset(): void {
-        let slide_wrap: HTMLElement = document.querySelector('#' + this.id + 'slide-wrap') as HTMLElement;
-        let slide_bar: HTMLElement = document.querySelector('#' + this.id + 'slide-bar') as HTMLElement;
-        let slide_block: HTMLElement = document.querySelector('#' + this.id + 'slide-block') as HTMLElement;
+        let slide_wrap: HTMLElement = document.querySelector('#' + this.id + 'lt-slide-wrap') as HTMLElement;
+        let slide_bar: HTMLElement = document.querySelector('#' + this.id + 'lt-slide-bar') as HTMLElement;
+        let slide_block: HTMLElement = document.querySelector('#' + this.id + 'lt-slide-block') as HTMLElement;
         let slide_text: HTMLElement = document.querySelector('#' + this.id + 'slide-text') as HTMLElement;
-        slide_bar.className = 'slide-bar';
-        slide_block.className = 'fa fa-chevron-right fa-lg slide-block'
+        slide_bar.className = 'lt-slide-bar';
+        slide_block.className = 'fa fa-chevron-right fa-lg lt-slide-block'
         slide_text.className = 'slide-text'
         slide_wrap.style.width = this.width + 'px';
         slide_wrap.style.height = this.height + 'px';
@@ -98,7 +98,7 @@ class SlideButton implements Params {
     slideEvent(): void {
         let self = this;
         let slide_max: number = self.width - self.height;
-        let slide_block: HTMLElement = document.querySelector('#' + this.id + 'slide-block') as HTMLElement;
+        let slide_block: HTMLElement = document.querySelector('#' + this.id + 'lt-slide-block') as HTMLElement;
         // 手势触碰滑块：改变滑块样式——初始化是否触碰布尔值、是否成功布尔值
         slide_block.addEventListener('touchstart', function () {
             self.isSuccess = false;
@@ -140,18 +140,18 @@ class SlideButton implements Params {
 
     // 请求成功的方法
     isPass(): void {
-        let slide_block: HTMLElement = document.querySelector('#' + this.id + 'slide-block') as HTMLElement;
-        slide_block.className = 'fa fa-check fa-lg success';
+        let slide_block: HTMLElement = document.querySelector('#' + this.id + 'lt-slide-block') as HTMLElement;
+        slide_block.className = 'fa fa-check fa-lg lt-success';
         // 一旦请求成功，即判定为整个滑动条的动画完成，不再提供滑动（ps：这个逻辑主要用于请求成功后锁定滑块）
         this.isOver = true;
     }
 
     // 请求失败的方法
     isFail(): void {
-        let slide_bar: HTMLElement = document.querySelector('#' + this.id + 'slide-bar') as HTMLElement;
-        let slide_block: HTMLElement = document.querySelector('#' + this.id + 'slide-block') as HTMLElement;
+        let slide_bar: HTMLElement = document.querySelector('#' + this.id + 'lt-slide-bar') as HTMLElement;
+        let slide_block: HTMLElement = document.querySelector('#' + this.id + 'lt-slide-block') as HTMLElement;
         let slide_text: HTMLElement = document.querySelector('#' + this.id + 'slide-text') as HTMLElement;
-        slide_block.className = 'fa fa-times fa-lg fail';
+        slide_block.className = 'fa fa-times fa-lg lt-fail';
         let self = this
         setTimeout(function (): void {
             self.reset()
@@ -164,24 +164,26 @@ class SlideButton implements Params {
     }
 
     success(): void {
-        let slide_wrap: HTMLElement = document.querySelector('#' + this.id + 'slide-wrap') as HTMLElement;
-        let slide_bar: HTMLElement = document.querySelector('#' + this.id + 'slide-bar') as HTMLElement;
+        let slide_wrap: HTMLElement = document.querySelector('#' + this.id + 'lt-slide-wrap') as HTMLElement;
+        let slide_bar: HTMLElement = document.querySelector('#' + this.id + 'lt-slide-bar') as HTMLElement;
         let slide_text: HTMLElement = document.querySelector('#' + this.id + 'slide-text') as HTMLElement;
-        let slide_block: HTMLElement = document.querySelector('#' + this.id + 'slide-block') as HTMLElement;
+        let slide_block: HTMLElement = document.querySelector('#' + this.id + 'lt-slide-block') as HTMLElement;
         let slideWrap_width: String | any = slide_wrap.style.width;
         let slideBlock_width: String | any = slide_block.style.width;
         let slide_bar_length: number = parseInt(slideWrap_width);
         let slide_block_length: number = parseInt(slideBlock_width)
         slide_text.innerHTML = '';
         slide_block.style.left = (slide_bar_length / 2 - slide_block_length / 2) + 'px'
-        slide_bar.classList.add("active")
-        slide_block.className = 'fa fa-cog fa-lg fa-spin fa-fw loading'
+        slide_bar.classList.add("lt-active")
+        slide_block.className = 'fa fa-cog fa-lg fa-spin fa-fw lt-loading'
         slide_block.style.transition = "left .5s linear"
         this.loading()
     }
 }
 
-
+/**
+ * 输入框逻辑接口
+ */
 interface Input {
     width:number,
     height:number,
@@ -292,4 +294,66 @@ class Input implements Input {
         console.log(val)
     }
     
+}
+
+interface scrollbar {
+    originWidth:string|number,
+    id:string,
+    getOriginWidth():string|number
+}
+
+class scrollbar implements scrollbar {
+    originWidth:string|number = '';
+    id:string;
+    content:any
+    constructor(id:string){
+        this.originWidth = this.getOriginWidth();
+        this.id = id;
+        let contentDom:HTMLElement = document.getElementById(id) as HTMLElement;
+        this.content = this.getContent(contentDom)
+        this.createBaseDom();
+
+    }
+
+
+    // 获取当前浏览器中滚动条的宽度
+    /*通过创建一个body以外的块状元素outer，给固定宽度，然后在里面添加一个宽度100%的块状元素inner,
+        inner在外层父元素设置了样式overflow:scroll的作用下会出现滚动条，此时用outer的宽减去inner
+        的宽度，即为滚动条的宽度，随后销毁该元素
+    */
+    getOriginWidth(){
+        let O_width;
+        const outer:HTMLElement = document.createElement('div');
+        outer.style.width = "100px";
+        outer.style.visibility = 'hidden'; //不能用display:none,因为会直接不存在该节点
+        outer.style.position = 'absolute';
+        outer.style.top = '-9999px';
+        outer.style.overflow = "scroll";
+        document.body.appendChild(outer);
+        const inner:HTMLElement = document.createElement('div');
+        inner.style.width = "100%";
+        outer.appendChild(inner);
+        const outer_width:number = outer.offsetWidth;
+        const inner_width:number = inner.offsetWidth;
+        if(outer.parentNode){
+            outer.parentNode.removeChild(outer)
+        }else{
+            document.body.removeChild(outer)
+        }
+        O_width = outer_width - inner_width;
+        return O_width
+    };
+
+    getContent(dom:HTMLElement){
+        let htmlContent:any = dom.innerHTML;
+        return htmlContent
+    };
+
+    // 构建基础布局
+    createBaseDom(){
+        let baseDom:HTMLElement = document.getElementById(this.id) as HTMLElement;
+        baseDom.innerHTML = '';
+
+    }
+
 }
