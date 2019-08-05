@@ -305,13 +305,17 @@ interface scrollbar {
 class scrollbar implements scrollbar {
     originWidth:string|number = '';
     id:string;
-    content:any
+    content:any;
+    scroll?:HTMLElement;
+    scroll_wrap?:HTMLElement;
+    scroll_bar?:HTMLElement;
     constructor(id:string){
         this.originWidth = this.getOriginWidth();
         this.id = id;
         let contentDom:HTMLElement = document.getElementById(id) as HTMLElement;
         this.content = this.getContent(contentDom)
         this.createBaseDom();
+        
 
     }
 
@@ -334,13 +338,18 @@ class scrollbar implements scrollbar {
         inner.style.width = "100%";
         outer.appendChild(inner);
         const outer_width:number = outer.offsetWidth;
+        console.log('outer_width:'+outer_width)
         const inner_width:number = inner.offsetWidth;
+        console.log('inner_width:'+inner_width)
         if(outer.parentNode){
             outer.parentNode.removeChild(outer)
         }else{
             document.body.removeChild(outer)
         }
         O_width = outer_width - inner_width;
+        if(O_width === 0){
+            O_width = 25
+        }
         return O_width
     };
 
@@ -351,9 +360,32 @@ class scrollbar implements scrollbar {
 
     // 构建基础布局
     createBaseDom(){
-        let baseDom:HTMLElement = document.getElementById(this.id) as HTMLElement;
-        baseDom.innerHTML = '';
-
+        let scroll:HTMLElement = document.getElementById(this.id) as HTMLElement;
+        scroll.innerHTML = '';
+        let scroll_wrap:HTMLElement = document.createElement('div');
+        let scroll_bar:HTMLElement = document.createElement('div');
+        scroll.setAttribute('id',`scroll-${this.id}`);
+        scroll_wrap.setAttribute('id',`scorll_wrap-${this.id}`);
+        scroll_bar.setAttribute('id',`scroll_bar-${this.id}`);
+        scroll.className = 'LT-scroll';
+        scroll_wrap.className = 'LT-scroll-wrap LT-ishorizontal';
+        scroll_bar.className = 'LT-scroll-bar';
+        //根据构建函数中获取到原生滚动条的宽度，开始进行样式修改
+        let wrapStyle = `margin-right:-${this.originWidth}px;margin-bottom:-${this.originWidth}px;padding-right:${this,this.originWidth}px`
+        let barStyle = `width:${this,this.originWidth}px`
+        scroll_wrap.setAttribute('style',wrapStyle);
+        scroll_bar.setAttribute('style',barStyle)
+        scroll_wrap.innerHTML = this.content;
+        scroll.appendChild(scroll_wrap);
+        scroll.appendChild(scroll_bar);
+        this.scroll = scroll;
+        this.scroll_bar = scroll_bar;
+        this.scroll_wrap = scroll_wrap;
+        this.initScrollBar(this.scroll_bar)
+    }
+    //组装滑动条
+    initScrollBar(dom:HTMLElement){
+        
     }
 
 }

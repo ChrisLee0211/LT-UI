@@ -277,7 +277,9 @@ var scrollbar = /** @class */ (function () {
         inner.style.width = "100%";
         outer.appendChild(inner);
         var outer_width = outer.offsetWidth;
+        console.log('outer_width:' + outer_width);
         var inner_width = inner.offsetWidth;
+        console.log('inner_width:' + inner_width);
         if (outer.parentNode) {
             outer.parentNode.removeChild(outer);
         }
@@ -285,6 +287,9 @@ var scrollbar = /** @class */ (function () {
             document.body.removeChild(outer);
         }
         O_width = outer_width - inner_width;
+        if (O_width === 0) {
+            O_width = 25;
+        }
         return O_width;
     };
     ;
@@ -295,8 +300,31 @@ var scrollbar = /** @class */ (function () {
     ;
     // 构建基础布局
     scrollbar.prototype.createBaseDom = function () {
-        var baseDom = document.getElementById(this.id);
-        baseDom.innerHTML = '';
+        var scroll = document.getElementById(this.id);
+        scroll.innerHTML = '';
+        var scroll_wrap = document.createElement('div');
+        var scroll_bar = document.createElement('div');
+        scroll.setAttribute('id', "scroll-" + this.id);
+        scroll_wrap.setAttribute('id', "scorll_wrap-" + this.id);
+        scroll_bar.setAttribute('id', "scroll_bar-" + this.id);
+        scroll.className = 'LT-scroll';
+        scroll_wrap.className = 'LT-scroll-wrap LT-ishorizontal';
+        scroll_bar.className = 'LT-scroll-bar';
+        //根据构建函数中获取到原生滚动条的宽度，开始进行样式修改
+        var wrapStyle = "margin-right:-" + this.originWidth + "px;margin-bottom:-" + this.originWidth + "px;padding-right:" + (this, this.originWidth) + "px";
+        var barStyle = "width:" + (this, this.originWidth) + "px";
+        scroll_wrap.setAttribute('style', wrapStyle);
+        scroll_bar.setAttribute('style', barStyle);
+        scroll_wrap.innerHTML = this.content;
+        scroll.appendChild(scroll_wrap);
+        scroll.appendChild(scroll_bar);
+        this.scroll = scroll;
+        this.scroll_bar = scroll_bar;
+        this.scroll_wrap = scroll_wrap;
+        this.initScrollBar(this.scroll_bar);
+    };
+    //组装滑动条
+    scrollbar.prototype.initScrollBar = function (dom) {
     };
     return scrollbar;
 }());

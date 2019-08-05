@@ -15,6 +15,7 @@
         .wrap{
             overflow: scroll;
             height:100%; 
+            padding-right: 16px;
             margin-right: -16px;
             margin-bottom: -16px;
             background: lightcoral
@@ -23,10 +24,7 @@
             width: 100%;
             height: 150px;
         }
-        .main{
-            width: 200px;
-            height: 200px;
-        }
+        
         .ishorizontal{
             overflow-x: hidden
         }
@@ -38,12 +36,28 @@
             border-radius: 4px;
             opacity: 0;
         }
+        .main{
+            width: 200px;
+            height: 200px;
+        }
     </style>
     <title>Document</title>
 </head>
 <body>
+    <div class="main" >
+        <LT-scroll id="scroll">
+            <p style="background:red">今晚大陆送活动哦冬季送到惊悚的浓雾饿哦我玩弄是董事局董事的浓</p>
+            <p style="background:blue">asdljasdaksdjas</p>
+            <p style="background:yellow">asdljasdaksdjas</p>
+            <p style="background:red">asdljasdaksdjas</p>
+            <p style="background:blue">asdljasdaksdjas</p>
+            <p style="background:yellow">asdljasdaksdjas</p>
+            <p style="background:red">asdljasdaksdjas</p>
+            <p style="background:blue">asdljasdaksdjas</p>
+            <p style="background:yellow">asdljasdaksdjas</p>
+        </LT-scroll>
+    </div>
     <div class="main">
-
         <div class="scroll">
             <div class="wrap ishorizontal">
                 <div class="item" style="background:aliceblue"></div>
@@ -54,8 +68,12 @@
             <div class="bar"></div>
         </div>
     </div>
+
     <lt-slideBtn id="slide"></lt-slideBtn>
     <script src="./js/index.js"></script>
+     <script>
+     let scroll_bar = new scrollbar('scroll')
+     </script>
     <script>
     </script>
 </body>
