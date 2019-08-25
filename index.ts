@@ -306,17 +306,22 @@ class scrollbar implements scrollbar {
     originWidth:string|number = '';
     id:string;
     content:any;
-    scroll?:HTMLElement;
-    scroll_wrap?:HTMLElement;
-    scroll_bar?:HTMLElement;
+    scroll:HTMLElement;
+    scroll_wrap:HTMLElement;
+    scroll_bar:HTMLElement;
+    scroll_thumb:HTMLElement;
+    timer:number|null = null;
     constructor(id:string){
         this.originWidth = this.getOriginWidth();
         this.id = id;
         let contentDom:HTMLElement = document.getElementById(id) as HTMLElement;
         this.content = this.getContent(contentDom)
-        this.createBaseDom();
-        
-
+        let {scroll,scroll_bar,scroll_wrap} = this.createBaseDom();
+        this.scroll = scroll;
+        this.scroll_bar = scroll_bar;
+        this.scroll_wrap = scroll_wrap;
+        this.scroll_thumb = this.initScrollBar(this.scroll_bar,this.scroll_wrap);
+        this.bindEvent()
     }
 
 
@@ -338,9 +343,7 @@ class scrollbar implements scrollbar {
         inner.style.width = "100%";
         outer.appendChild(inner);
         const outer_width:number = outer.offsetWidth;
-        console.log('outer_width:'+outer_width)
         const inner_width:number = inner.offsetWidth;
-        console.log('inner_width:'+inner_width)
         if(outer.parentNode){
             outer.parentNode.removeChild(outer)
         }else{
@@ -353,6 +356,7 @@ class scrollbar implements scrollbar {
         return O_width
     };
 
+    // 获取html的可视内容
     getContent(dom:HTMLElement){
         let htmlContent:any = dom.innerHTML;
         return htmlContent
@@ -367,25 +371,49 @@ class scrollbar implements scrollbar {
         scroll.setAttribute('id',`scroll-${this.id}`);
         scroll_wrap.setAttribute('id',`scorll_wrap-${this.id}`);
         scroll_bar.setAttribute('id',`scroll_bar-${this.id}`);
-        scroll.className = 'LT-scroll';
-        scroll_wrap.className = 'LT-scroll-wrap LT-ishorizontal';
-        scroll_bar.className = 'LT-scroll-bar';
+        scroll.className = 'lt-scroll';
+        scroll_wrap.className = 'lt-scroll-wrap lt-ishorizontal';
+        scroll_bar.className = 'lt-scroll-bar lt-scroll-moveOut';
         //根据构建函数中获取到原生滚动条的宽度，开始进行样式修改
-        let wrapStyle = `margin-right:-${this.originWidth}px;margin-bottom:-${this.originWidth}px;padding-right:${this,this.originWidth}px`
-        let barStyle = `width:${this,this.originWidth}px`
+        let wrapStyle = `margin-right:-${this.originWidth}px;margin-bottom:-${this.originWidth}px;padding-right:${this.originWidth}px`
         scroll_wrap.setAttribute('style',wrapStyle);
-        scroll_bar.setAttribute('style',barStyle)
         scroll_wrap.innerHTML = this.content;
         scroll.appendChild(scroll_wrap);
         scroll.appendChild(scroll_bar);
-        this.scroll = scroll;
-        this.scroll_bar = scroll_bar;
-        this.scroll_wrap = scroll_wrap;
-        this.initScrollBar(this.scroll_bar)
+        
+        return {scroll,scroll_wrap,scroll_bar}
     }
     //组装滑动条
-    initScrollBar(dom:HTMLElement){
-        
+    initScrollBar(bar:HTMLElement,wrap:HTMLElement){
+        let barWidth:string|number = Number(this.originWidth)*0.4;
+        let barStyle:string = `width:${barWidth}px;`;
+        bar.setAttribute('style',barStyle);
+        // 定义一个滚动块thumb
+        let thumb:HTMLElement = document.createElement('div');
+        thumb.className = 'lt-scroll-thumb';
+        // 获取thumb高度的方法：只需要知道滚动内容的高度clientHeight和可视窗口的高度scrollHeight
+        // 再得出两者的比例关系，那么滚动块和滚动条也必然是这个比例关系，同理即可得出高度
+        let precent:number = parseInt(String(wrap.clientHeight/wrap.scrollHeight*100))/100;
+        let barHeight:number = bar.offsetHeight;
+        let thumbHeight:number = barHeight*precent;
+        let thumbStyle:string = `height:${thumbHeight}px`;
+        thumb.setAttribute('style',thumbStyle);
+        this.scroll_thumb = thumb;
+        bar.appendChild(thumb);
+        return thumb
+    }
+
+    // 为各元素绑定事件
+    bindEvent(){
+        //监测内容滚动
+        this.scroll_wrap.addEventListener('scroll',(e:Event)=>{
+            this.scroll_bar.className = 'lt-scroll-bar lt-scroll-moveOn';
+            this.scroll_thumb.className = 'lt-scroll-thumb lt-scroll-moveOn'
+            if(this.timer!==null){clearTimeout(this.timer)}
+            this.timer = setTimeout(()=>{
+                this.scroll_bar.className = 'lt-scroll-bar lt-scroll-moveOut';
+            },1000)
+        })
     }
 
 }

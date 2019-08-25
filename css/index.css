@@ -103,23 +103,40 @@
 /*
 滚动条样式
 */
-.LT-scroll {
+.lt-scroll {
   height: 100%;
   width: 100%;
   overflow: hidden;
   position: relative;
   display: block;
 }
-.LT-scroll-wrap {
+.lt-scroll-wrap {
   overflow: scroll;
   height: 100%;
 }
-.LT-scroll-bar {
+.lt-scroll-bar {
   height: 100%;
   position: absolute;
   right: 0px;
   bottom: 0px;
+  background-color: rgba(20, 20, 20, 0.2);
+  border-radius: 20px;
+  transition: opacity 0.2s ease-in-out;
 }
-.LT-ishorizontal {
+.lt-scroll-thumb {
+  width: 100%;
+  background: rgba(20, 20, 20, 0.75);
+  border-radius: 20px;
+  transform: scaleY(0.3);
+  transition: transform 0.25s ease-in-out;
+}
+.lt-ishorizontal {
   overflow-x: hidden;
+}
+.lt-scroll-moveOn {
+  opacity: 1;
+  transform: scaleY(1);
+}
+.lt-scroll-moveOut {
+  opacity: 0;
 }

@@ -253,11 +253,17 @@ var Input = /** @class */ (function () {
 var scrollbar = /** @class */ (function () {
     function scrollbar(id) {
         this.originWidth = '';
+        this.timer = null;
         this.originWidth = this.getOriginWidth();
         this.id = id;
         var contentDom = document.getElementById(id);
         this.content = this.getContent(contentDom);
-        this.createBaseDom();
+        var _a = this.createBaseDom(), scroll = _a.scroll, scroll_bar = _a.scroll_bar, scroll_wrap = _a.scroll_wrap;
+        this.scroll = scroll;
+        this.scroll_bar = scroll_bar;
+        this.scroll_wrap = scroll_wrap;
+        this.scroll_thumb = this.initScrollBar(this.scroll_bar, this.scroll_wrap);
+        this.bindEvent();
     }
     // 获取当前浏览器中滚动条的宽度
     /*通过创建一个body以外的块状元素outer，给固定宽度，然后在里面添加一个宽度100%的块状元素inner,
@@ -277,9 +283,7 @@ var scrollbar = /** @class */ (function () {
         inner.style.width = "100%";
         outer.appendChild(inner);
         var outer_width = outer.offsetWidth;
-        console.log('outer_width:' + outer_width);
         var inner_width = inner.offsetWidth;
-        console.log('inner_width:' + inner_width);
         if (outer.parentNode) {
             outer.parentNode.removeChild(outer);
         }
@@ -293,6 +297,7 @@ var scrollbar = /** @class */ (function () {
         return O_width;
     };
     ;
+    // 获取html的可视内容
     scrollbar.prototype.getContent = function (dom) {
         var htmlContent = dom.innerHTML;
         return htmlContent;
@@ -307,24 +312,50 @@ var scrollbar = /** @class */ (function () {
         scroll.setAttribute('id', "scroll-" + this.id);
         scroll_wrap.setAttribute('id', "scorll_wrap-" + this.id);
         scroll_bar.setAttribute('id', "scroll_bar-" + this.id);
-        scroll.className = 'LT-scroll';
-        scroll_wrap.className = 'LT-scroll-wrap LT-ishorizontal';
-        scroll_bar.className = 'LT-scroll-bar';
+        scroll.className = 'lt-scroll';
+        scroll_wrap.className = 'lt-scroll-wrap lt-ishorizontal';
+        scroll_bar.className = 'lt-scroll-bar lt-scroll-moveOut';
         //根据构建函数中获取到原生滚动条的宽度，开始进行样式修改
-        var wrapStyle = "margin-right:-" + this.originWidth + "px;margin-bottom:-" + this.originWidth + "px;padding-right:" + (this, this.originWidth) + "px";
-        var barStyle = "width:" + (this, this.originWidth) + "px";
+        var wrapStyle = "margin-right:-" + this.originWidth + "px;margin-bottom:-" + this.originWidth + "px;padding-right:" + this.originWidth + "px";
         scroll_wrap.setAttribute('style', wrapStyle);
-        scroll_bar.setAttribute('style', barStyle);
         scroll_wrap.innerHTML = this.content;
         scroll.appendChild(scroll_wrap);
         scroll.appendChild(scroll_bar);
-        this.scroll = scroll;
-        this.scroll_bar = scroll_bar;
-        this.scroll_wrap = scroll_wrap;
-        this.initScrollBar(this.scroll_bar);
+        return { scroll: scroll, scroll_wrap: scroll_wrap, scroll_bar: scroll_bar };
     };
     //组装滑动条
-    scrollbar.prototype.initScrollBar = function (dom) {
+    scrollbar.prototype.initScrollBar = function (bar, wrap) {
+        var barWidth = Number(this.originWidth) * 0.4;
+        var barStyle = "width:" + barWidth + "px;";
+        bar.setAttribute('style', barStyle);
+        // 定义一个滚动块thumb
+        var thumb = document.createElement('div');
+        thumb.className = 'lt-scroll-thumb';
+        // 获取thumb高度的方法：只需要知道滚动内容的高度clientHeight和可视窗口的高度scrollHeight
+        // 再得出两者的比例关系，那么滚动块和滚动条也必然是这个比例关系，同理即可得出高度
+        var precent = parseInt(String(wrap.clientHeight / wrap.scrollHeight * 100)) / 100;
+        var barHeight = bar.offsetHeight;
+        var thumbHeight = barHeight * precent;
+        var thumbStyle = "height:" + thumbHeight + "px";
+        thumb.setAttribute('style', thumbStyle);
+        this.scroll_thumb = thumb;
+        bar.appendChild(thumb);
+        return thumb;
+    };
+    // 为各元素绑定事件
+    scrollbar.prototype.bindEvent = function () {
+        var _this = this;
+        //监测内容滚动
+        this.scroll_wrap.addEventListener('scroll', function (e) {
+            _this.scroll_bar.className = 'lt-scroll-bar lt-scroll-moveOn';
+            _this.scroll_thumb.className = 'lt-scroll-thumb lt-scroll-moveOn';
+            if (_this.timer !== null) {
+                clearTimeout(_this.timer);
+            }
+            _this.timer = setTimeout(function () {
+                _this.scroll_bar.className = 'lt-scroll-bar lt-scroll-moveOut';
+            }, 1000);
+        });
     };
     return scrollbar;
 }());
