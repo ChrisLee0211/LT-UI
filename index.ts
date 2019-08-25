@@ -20,8 +20,8 @@ class SlideButton implements Params {
     isTouch: boolean = false;
     isSuccess: boolean = false;
     isEnd: boolean = false;
-    isOver:boolean = false;
-    isMove:boolean = false;
+    isOver: boolean = false;
+    isMove: boolean = false;
     constructor(width: number, height: number, text: string, id: string) {
         this.width = width;
         this.height = height;
@@ -41,11 +41,11 @@ class SlideButton implements Params {
     createDom(): void {
         let button: HTMLElement = document.getElementById(this.id) as HTMLElement
         // 添加font-awesome的cdn
-        let link:any = document.createElement('link');
+        let link: any = document.createElement('link');
         link.type = 'text/css';
         link.rel = 'stylesheet';
         link.href = "http://cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css";
-        let head:HTMLElement = document.getElementsByTagName('head')[0] as HTMLElement;
+        let head: HTMLElement = document.getElementsByTagName('head')[0] as HTMLElement;
         head.appendChild(link)
 
         // 滑块背景
@@ -185,25 +185,25 @@ class SlideButton implements Params {
  * 输入框逻辑接口
  */
 interface Input {
-    width:number,
-    height:number,
-    id:string,
-    tips:string,
-    type?:string,
-    init():void,
-    createDom():void
+    width: number,
+    height: number,
+    id: string,
+    tips: string,
+    type?: string,
+    init(): void,
+    createDom(): void
 }
 
 class Input implements Input {
-    width:number;
-    height:number;
-    id:string;
-    type?:string;
-    tips:string;
-    dom?:HTMLElement;
-    labelDom?:HTMLElement;
-    inputDom?:HTMLElement;
-    constructor(width:number,height:number,id:string,tips:string,type?:string){
+    width: number;
+    height: number;
+    id: string;
+    type?: string;
+    tips: string;
+    dom?: HTMLElement;
+    labelDom?: HTMLElement;
+    inputDom?: HTMLElement;
+    constructor(width: number, height: number, id: string, tips: string, type?: string) {
         this.width = width;
         this.height = height;
         this.id = id;
@@ -212,16 +212,16 @@ class Input implements Input {
         this.init()
     }
     // 初始化
-    init():void{
+    init(): void {
         this.createDom();
         this.bindEvent();
     }
-    createDom():void{
-        let dom:HTMLElement = document.getElementById(this.id) as HTMLElement;
-        let inputDom:HTMLElement = document.createElement('input');
-        let labelDom:HTMLElement = document.createElement('span');
-        if(this.type === 'password'){
-            inputDom.setAttribute('type','password')
+    createDom(): void {
+        let dom: HTMLElement = document.getElementById(this.id) as HTMLElement;
+        let inputDom: HTMLElement = document.createElement('input');
+        let labelDom: HTMLElement = document.createElement('span');
+        if (this.type === 'password') {
+            inputDom.setAttribute('type', 'password')
         }
         labelDom.innerHTML = this.tips;
         inputDom.style.textIndent = '10px';
@@ -229,191 +229,243 @@ class Input implements Input {
         inputDom.style.height = this.height + 'px';
         dom.appendChild(labelDom);
         dom.appendChild(inputDom);
-        this.setStyle(dom,labelDom,inputDom);
+        this.setStyle(dom, labelDom, inputDom);
         this.dom = dom;
         this.labelDom = labelDom;
         this.inputDom = inputDom
     }
-    setStyle(...args:any){
+    setStyle(...args: any) {
         let arr = [...args];
-        let dom:HTMLElement = arr[0];
-        let inputDom:HTMLElement = arr[2];
-        let labelDom:HTMLElement = arr[1];
-        let label_width:string|any = labelDom.offsetWidth;
+        let dom: HTMLElement = arr[0];
+        let inputDom: HTMLElement = arr[2];
+        let labelDom: HTMLElement = arr[1];
+        let label_width: string | any = labelDom.offsetWidth;
         dom.className = "inputBody";
         inputDom.className = "inputStyle";
-        let labelStyle:string = `margin-right:20px;transform:translateX(${label_width+40}px)`
-        labelDom.setAttribute('style',labelStyle)
+        let labelStyle: string = `margin-right:20px;transform:translateX(${label_width + 40}px)`
+        labelDom.setAttribute('style', labelStyle)
     }
-    bindEvent():void{
-        let dom:HTMLElement = this.dom as HTMLElement;
-        let labelDom:HTMLElement = this.labelDom as HTMLElement;
-        let inputDom:HTMLElement = this.inputDom as HTMLElement;
-        
-        inputDom.addEventListener('focus',(e)=>{
+    bindEvent(): void {
+        let dom: HTMLElement = this.dom as HTMLElement;
+        let labelDom: HTMLElement = this.labelDom as HTMLElement;
+        let inputDom: HTMLElement = this.inputDom as HTMLElement;
+
+        inputDom.addEventListener('focus', (e) => {
             inputDom.className = "inputStyle inputActive"
-            let labelStyle:string = `margin-right:20px;transform:translateX(0px)`;
+            let labelStyle: string = `margin-right:20px;transform:translateX(0px)`;
             labelDom.className = "inputLabel";
-            labelDom.setAttribute('style',labelStyle);
-            let value:any = inputDom.innerHTML;
+            labelDom.setAttribute('style', labelStyle);
+            let value: any = inputDom.innerHTML;
             this.focus((<HTMLInputElement>e.target).value);
         });
-        inputDom.addEventListener('blur',(e)=>{
-            let text:any|null =(<HTMLInputElement>e.target).value;
-            if(text === ''){
-                let labelStyle:string = `margin-right:20px;transform:translateX(${labelDom.offsetWidth+40}px)`
-                labelDom.setAttribute('style',labelStyle);
-                
-            }else{
-                
+        inputDom.addEventListener('blur', (e) => {
+            let text: any | null = (<HTMLInputElement>e.target).value;
+            if (text === '') {
+                let labelStyle: string = `margin-right:20px;transform:translateX(${labelDom.offsetWidth + 40}px)`
+                labelDom.setAttribute('style', labelStyle);
+
+            } else {
+
             }
             this.blur(text);
-            inputDom.className="inputStyle";
+            inputDom.className = "inputStyle";
         })
-        inputDom.addEventListener('input',(e)=>{
+        inputDom.addEventListener('input', (e) => {
             this.change((<HTMLInputElement>e.target).value)
         })
-        labelDom.addEventListener('mouseover',()=>{
+        labelDom.addEventListener('mouseover', () => {
             inputDom.className = "inputStyle inputActive"
         });
-        labelDom.addEventListener('mouseout',()=>{
+        labelDom.addEventListener('mouseout', () => {
             inputDom.className = "inputStyle"
         })
-        labelDom.addEventListener('click',()=>{
+        labelDom.addEventListener('click', () => {
             inputDom.className = "inputStyle inputActive";
             inputDom.focus()
         })
     }
-    focus(val:any):any{
+    focus(val: any): any {
         console.log(val)
     }
-    change(val:any):any{
+    change(val: any): any {
         console.log(val)
     }
-    blur(val:any):any{
+    blur(val: any): any {
         console.log(val)
     }
-    
+
 }
 
 interface scrollbar {
-    originWidth:string|number,
-    id:string,
-    getOriginWidth():string|number
+    originWidth: string | number,
+    id: string,
+    options: scrollOpt,
+    getOriginWidth(): string | number
+}
+
+interface scrollOpt {
+    loadMore: boolean,
+    pullOffset: number
 }
 
 class scrollbar implements scrollbar {
-    originWidth:string|number = '';
-    id:string;
-    content:any;
-    scroll:HTMLElement;
-    scroll_wrap:HTMLElement;
-    scroll_bar:HTMLElement;
-    scroll_thumb:HTMLElement;
-    timer:number|null = null;
-    constructor(id:string){
+    originWidth: string | number = '';
+    id: string;
+    options: scrollOpt;
+    content: any;
+    scroll: HTMLElement;
+    scroll_wrap: HTMLElement;
+    scroll_bar: HTMLElement;
+    scroll_thumb: HTMLElement;
+    timer: number | null = null;
+    pullTimeer: number | null = null;
+    isReset:boolean=false;
+
+    constructor(id: string, options?: scrollOpt) {
         this.originWidth = this.getOriginWidth();
         this.id = id;
-        let contentDom:HTMLElement = document.getElementById(id) as HTMLElement;
+        if (options) {
+            this.options = options;
+        } else {
+            this.options = { loadMore: false, pullOffset: 0 }
+        }
+        let contentDom: HTMLElement = document.getElementById(id) as HTMLElement;
         this.content = this.getContent(contentDom)
-        let {scroll,scroll_bar,scroll_wrap} = this.createBaseDom();
+        let { scroll, scroll_bar, scroll_wrap } = this.createBaseDom();
         this.scroll = scroll;
         this.scroll_bar = scroll_bar;
         this.scroll_wrap = scroll_wrap;
-        this.scroll_thumb = this.initScrollBar(this.scroll_bar,this.scroll_wrap);
+        this.scroll_thumb = this.initScrollBar(this.scroll_bar, this.scroll_wrap);
         this.bindEvent()
     }
 
+    //重置滚动条:是否需要重建dom结构还是直接修改scrollbar？？？如何保持上次滚动距离？
+    resetScroll(){
+        this.isReset = true;
+        let contentDom: HTMLElement = document.getElementById(`scorll_wrap-${this.id}`) as HTMLElement;
+        this.content = contentDom.innerHTML;
+        let { scroll, scroll_bar, scroll_wrap } = this.createBaseDom();
+        this.scroll = scroll;
+        this.scroll_bar = scroll_bar;
+        this.scroll_wrap = scroll_wrap;
+        this.scroll_thumb = this.initScrollBar(this.scroll_bar, this.scroll_wrap);
+        this.bindEvent()
+    }
 
     // 获取当前浏览器中滚动条的宽度
     /*通过创建一个body以外的块状元素outer，给固定宽度，然后在里面添加一个宽度100%的块状元素inner,
         inner在外层父元素设置了样式overflow:scroll的作用下会出现滚动条，此时用outer的宽减去inner
         的宽度，即为滚动条的宽度，随后销毁该元素
     */
-    getOriginWidth(){
+    getOriginWidth() {
         let O_width;
-        const outer:HTMLElement = document.createElement('div');
+        const outer: HTMLElement = document.createElement('div');
         outer.style.width = "100px";
         outer.style.visibility = 'hidden'; //不能用display:none,因为会直接不存在该节点
         outer.style.position = 'absolute';
         outer.style.top = '-9999px';
         outer.style.overflow = "scroll";
         document.body.appendChild(outer);
-        const inner:HTMLElement = document.createElement('div');
+        const inner: HTMLElement = document.createElement('div');
         inner.style.width = "100%";
         outer.appendChild(inner);
-        const outer_width:number = outer.offsetWidth;
-        const inner_width:number = inner.offsetWidth;
-        if(outer.parentNode){
+        const outer_width: number = outer.offsetWidth;
+        const inner_width: number = inner.offsetWidth;
+        if (outer.parentNode) {
             outer.parentNode.removeChild(outer)
-        }else{
+        } else {
             document.body.removeChild(outer)
         }
         O_width = outer_width - inner_width;
-        if(O_width === 0){
+        if (O_width === 0) {
             O_width = 25
         }
         return O_width
     };
 
     // 获取html的可视内容
-    getContent(dom:HTMLElement){
-        let htmlContent:any = dom.innerHTML;
+    getContent(dom: HTMLElement) {
+        let htmlContent: any = dom.innerHTML;
         return htmlContent
     };
 
     // 构建基础布局
-    createBaseDom(){
-        let scroll:HTMLElement = document.getElementById(this.id) as HTMLElement;
+    createBaseDom() {
+        let scroll:HTMLElement;
+        if(this.isReset){
+         scroll = document.getElementById(`scroll-${this.id}`) as HTMLElement;
+         this.isReset = false;
+        }else{
+            scroll = document.getElementById(this.id) as HTMLElement;
+        }
         scroll.innerHTML = '';
-        let scroll_wrap:HTMLElement = document.createElement('div');
-        let scroll_bar:HTMLElement = document.createElement('div');
-        scroll.setAttribute('id',`scroll-${this.id}`);
-        scroll_wrap.setAttribute('id',`scorll_wrap-${this.id}`);
-        scroll_bar.setAttribute('id',`scroll_bar-${this.id}`);
+        let scroll_wrap: HTMLElement = document.createElement('div');
+        let scroll_bar: HTMLElement = document.createElement('div');
+        scroll.setAttribute('id', `scroll-${this.id}`);
+        scroll_wrap.setAttribute('id', `scorll_wrap-${this.id}`);
+        scroll_bar.setAttribute('id', `scroll_bar-${this.id}`);
         scroll.className = 'lt-scroll';
         scroll_wrap.className = 'lt-scroll-wrap lt-ishorizontal';
         scroll_bar.className = 'lt-scroll-bar lt-scroll-moveOut';
         //根据构建函数中获取到原生滚动条的宽度，开始进行样式修改
         let wrapStyle = `margin-right:-${this.originWidth}px;margin-bottom:-${this.originWidth}px;padding-right:${this.originWidth}px`
-        scroll_wrap.setAttribute('style',wrapStyle);
+        scroll_wrap.setAttribute('style', wrapStyle);
         scroll_wrap.innerHTML = this.content;
         scroll.appendChild(scroll_wrap);
         scroll.appendChild(scroll_bar);
-        
-        return {scroll,scroll_wrap,scroll_bar}
+
+        return { scroll, scroll_wrap, scroll_bar }
     }
     //组装滑动条
-    initScrollBar(bar:HTMLElement,wrap:HTMLElement){
-        let barWidth:string|number = Number(this.originWidth)*0.4;
-        let barStyle:string = `width:${barWidth}px;`;
-        bar.setAttribute('style',barStyle);
+    initScrollBar(bar: HTMLElement, wrap: HTMLElement) {
+        let barWidth: string | number = Number(this.originWidth) * 0.4;
+        let barStyle: string = `width:${barWidth}px;`;
+        bar.setAttribute('style', barStyle);
         // 定义一个滚动块thumb
-        let thumb:HTMLElement = document.createElement('div');
+        let thumb: HTMLElement = document.createElement('div');
         thumb.className = 'lt-scroll-thumb';
         // 获取thumb高度的方法：只需要知道滚动内容的高度clientHeight和可视窗口的高度scrollHeight
         // 再得出两者的比例关系，那么滚动块和滚动条也必然是这个比例关系，同理即可得出高度
-        let precent:number = parseInt(String(wrap.clientHeight/wrap.scrollHeight*100))/100;
-        let barHeight:number = bar.offsetHeight;
-        let thumbHeight:number = barHeight*precent;
-        let thumbStyle:string = `height:${thumbHeight}px`;
-        thumb.setAttribute('style',thumbStyle);
+        let precent: number = parseInt(String(wrap.clientHeight / wrap.scrollHeight * 100)) / 100;
+        let barHeight: number = bar.offsetHeight;
+        let thumbHeight: number = barHeight * precent;
+        let thumbStyle: string = `height:${thumbHeight}px`;
+        thumb.setAttribute('style', thumbStyle);
         this.scroll_thumb = thumb;
         bar.appendChild(thumb);
         return thumb
     }
 
     // 为各元素绑定事件
-    bindEvent(){
+    bindEvent() {
         //监测内容滚动
-        this.scroll_wrap.addEventListener('scroll',(e:Event)=>{
+        this.scroll_wrap.addEventListener('scroll', (e: Event) => {
             this.scroll_bar.className = 'lt-scroll-bar lt-scroll-moveOn';
-            this.scroll_thumb.className = 'lt-scroll-thumb lt-scroll-moveOn'
-            if(this.timer!==null){clearTimeout(this.timer)}
-            this.timer = setTimeout(()=>{
+            this.scroll_thumb.className = 'lt-scroll-thumb lt-scroll-moveOn';
+            let scroll_top_origin: number = this.scroll_wrap.scrollTop;
+            let precent: number = parseInt(String(scroll_top_origin / this.scroll_wrap.scrollHeight * 100)) / 100;
+            let scroll_Top_self: number = this.scroll_bar.offsetHeight * precent;
+            this.scroll_thumb.style.marginTop = `${scroll_Top_self}px`
+            if (this.options.loadMore === true) {
+                if (this.pullTimeer !== null) { clearTimeout(this.pullTimeer) }
+                this.pullTimeer = setTimeout(() => {
+                    let pullDownNum: number = this.scroll_wrap.clientHeight - this.scroll_thumb.offsetHeight - scroll_Top_self;
+                    if (this.options.pullOffset > pullDownNum) {
+                            this.pull();
+                            this.resetScroll()
+                        }
+                    }, 500)
+                
+            }
+            if (this.timer !== null) { clearTimeout(this.timer) }
+            this.timer = setTimeout(() => {
                 this.scroll_bar.className = 'lt-scroll-bar lt-scroll-moveOut';
-            },1000)
+            }, 1000)
         })
+    }
+
+    //滚动加载事件钩子
+    pull() {
     }
 
 }

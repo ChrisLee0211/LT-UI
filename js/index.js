@@ -251,11 +251,19 @@ var Input = /** @class */ (function () {
     return Input;
 }());
 var scrollbar = /** @class */ (function () {
-    function scrollbar(id) {
+    function scrollbar(id, options) {
         this.originWidth = '';
         this.timer = null;
+        this.pullTimeer = null;
+        this.isReset = false;
         this.originWidth = this.getOriginWidth();
         this.id = id;
+        if (options) {
+            this.options = options;
+        }
+        else {
+            this.options = { loadMore: false, pullOffset: 0 };
+        }
         var contentDom = document.getElementById(id);
         this.content = this.getContent(contentDom);
         var _a = this.createBaseDom(), scroll = _a.scroll, scroll_bar = _a.scroll_bar, scroll_wrap = _a.scroll_wrap;
@@ -265,6 +273,18 @@ var scrollbar = /** @class */ (function () {
         this.scroll_thumb = this.initScrollBar(this.scroll_bar, this.scroll_wrap);
         this.bindEvent();
     }
+    //重置滚动条:是否需要重建dom结构还是直接修改scrollbar？？？如何保持上次滚动距离？
+    scrollbar.prototype.resetScroll = function () {
+        this.isReset = true;
+        var contentDom = document.getElementById("scorll_wrap-" + this.id);
+        this.content = contentDom.innerHTML;
+        var _a = this.createBaseDom(), scroll = _a.scroll, scroll_bar = _a.scroll_bar, scroll_wrap = _a.scroll_wrap;
+        this.scroll = scroll;
+        this.scroll_bar = scroll_bar;
+        this.scroll_wrap = scroll_wrap;
+        this.scroll_thumb = this.initScrollBar(this.scroll_bar, this.scroll_wrap);
+        this.bindEvent();
+    };
     // 获取当前浏览器中滚动条的宽度
     /*通过创建一个body以外的块状元素outer，给固定宽度，然后在里面添加一个宽度100%的块状元素inner,
         inner在外层父元素设置了样式overflow:scroll的作用下会出现滚动条，此时用outer的宽减去inner
@@ -305,7 +325,14 @@ var scrollbar = /** @class */ (function () {
     ;
     // 构建基础布局
     scrollbar.prototype.createBaseDom = function () {
-        var scroll = document.getElementById(this.id);
+        var scroll;
+        if (this.isReset) {
+            scroll = document.getElementById("scroll-" + this.id);
+            this.isReset = false;
+        }
+        else {
+            scroll = document.getElementById(this.id);
+        }
         scroll.innerHTML = '';
         var scroll_wrap = document.createElement('div');
         var scroll_bar = document.createElement('div');
@@ -349,6 +376,22 @@ var scrollbar = /** @class */ (function () {
         this.scroll_wrap.addEventListener('scroll', function (e) {
             _this.scroll_bar.className = 'lt-scroll-bar lt-scroll-moveOn';
             _this.scroll_thumb.className = 'lt-scroll-thumb lt-scroll-moveOn';
+            var scroll_top_origin = _this.scroll_wrap.scrollTop;
+            var precent = parseInt(String(scroll_top_origin / _this.scroll_wrap.scrollHeight * 100)) / 100;
+            var scroll_Top_self = _this.scroll_bar.offsetHeight * precent;
+            _this.scroll_thumb.style.marginTop = scroll_Top_self + "px";
+            if (_this.options.loadMore === true) {
+                if (_this.pullTimeer !== null) {
+                    clearTimeout(_this.pullTimeer);
+                }
+                _this.pullTimeer = setTimeout(function () {
+                    var pullDownNum = _this.scroll_wrap.clientHeight - _this.scroll_thumb.offsetHeight - scroll_Top_self;
+                    if (_this.options.pullOffset > pullDownNum) {
+                        _this.pull();
+                        _this.resetScroll();
+                    }
+                }, 500);
+            }
             if (_this.timer !== null) {
                 clearTimeout(_this.timer);
             }
@@ -356,6 +399,9 @@ var scrollbar = /** @class */ (function () {
                 _this.scroll_bar.className = 'lt-scroll-bar lt-scroll-moveOut';
             }, 1000);
         });
+    };
+    //滚动加载事件钩子
+    scrollbar.prototype.pull = function () {
     };
     return scrollbar;
 }());
