@@ -318,8 +318,8 @@ class scrollbar implements scrollbar {
     scroll_bar: HTMLElement;
     scroll_thumb: HTMLElement;
     timer: number | null = null;
+    lastScroll: number = 0;
     pullTimeer: number | null = null;
-    isReset:boolean=false;
 
     constructor(id: string, options?: scrollOpt) {
         this.originWidth = this.getOriginWidth();
@@ -340,16 +340,8 @@ class scrollbar implements scrollbar {
     }
 
     //重置滚动条:是否需要重建dom结构还是直接修改scrollbar？？？如何保持上次滚动距离？
-    resetScroll(){
-        this.isReset = true;
-        let contentDom: HTMLElement = document.getElementById(`scorll_wrap-${this.id}`) as HTMLElement;
-        this.content = contentDom.innerHTML;
-        let { scroll, scroll_bar, scroll_wrap } = this.createBaseDom();
-        this.scroll = scroll;
-        this.scroll_bar = scroll_bar;
-        this.scroll_wrap = scroll_wrap;
-        this.scroll_thumb = this.initScrollBar(this.scroll_bar, this.scroll_wrap);
-        this.bindEvent()
+    resetScroll() {
+        console.log('reset')
     }
 
     // 获取当前浏览器中滚动条的宽度
@@ -391,17 +383,11 @@ class scrollbar implements scrollbar {
 
     // 构建基础布局
     createBaseDom() {
-        let scroll:HTMLElement;
-        if(this.isReset){
-         scroll = document.getElementById(`scroll-${this.id}`) as HTMLElement;
-         this.isReset = false;
-        }else{
-            scroll = document.getElementById(this.id) as HTMLElement;
-        }
+        let scroll: HTMLElement;
+     scroll = document.getElementById(this.id) as HTMLElement;
         scroll.innerHTML = '';
         let scroll_wrap: HTMLElement = document.createElement('div');
         let scroll_bar: HTMLElement = document.createElement('div');
-        scroll.setAttribute('id', `scroll-${this.id}`);
         scroll_wrap.setAttribute('id', `scorll_wrap-${this.id}`);
         scroll_bar.setAttribute('id', `scroll_bar-${this.id}`);
         scroll.className = 'lt-scroll';
@@ -429,7 +415,7 @@ class scrollbar implements scrollbar {
         let precent: number = parseInt(String(wrap.clientHeight / wrap.scrollHeight * 100)) / 100;
         let barHeight: number = bar.offsetHeight;
         let thumbHeight: number = barHeight * precent;
-        let thumbStyle: string = `height:${thumbHeight}px`;
+        let thumbStyle: string = `height:${thumbHeight}px;margin-top:${this.lastScroll}px`;
         thumb.setAttribute('style', thumbStyle);
         this.scroll_thumb = thumb;
         bar.appendChild(thumb);
@@ -447,15 +433,15 @@ class scrollbar implements scrollbar {
             let scroll_Top_self: number = this.scroll_bar.offsetHeight * precent;
             this.scroll_thumb.style.marginTop = `${scroll_Top_self}px`
             if (this.options.loadMore === true) {
+                this.lastScroll = scroll_Top_self;
                 if (this.pullTimeer !== null) { clearTimeout(this.pullTimeer) }
                 this.pullTimeer = setTimeout(() => {
                     let pullDownNum: number = this.scroll_wrap.clientHeight - this.scroll_thumb.offsetHeight - scroll_Top_self;
                     if (this.options.pullOffset > pullDownNum) {
-                            this.pull();
-                            this.resetScroll()
-                        }
-                    }, 500)
-                
+                        this.pull();
+                    }
+                }, 500)
+
             }
             if (this.timer !== null) { clearTimeout(this.timer) }
             this.timer = setTimeout(() => {

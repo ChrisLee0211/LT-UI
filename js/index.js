@@ -254,8 +254,8 @@ var scrollbar = /** @class */ (function () {
     function scrollbar(id, options) {
         this.originWidth = '';
         this.timer = null;
+        this.lastScroll = 0;
         this.pullTimeer = null;
-        this.isReset = false;
         this.originWidth = this.getOriginWidth();
         this.id = id;
         if (options) {
@@ -275,15 +275,7 @@ var scrollbar = /** @class */ (function () {
     }
     //重置滚动条:是否需要重建dom结构还是直接修改scrollbar？？？如何保持上次滚动距离？
     scrollbar.prototype.resetScroll = function () {
-        this.isReset = true;
-        var contentDom = document.getElementById("scorll_wrap-" + this.id);
-        this.content = contentDom.innerHTML;
-        var _a = this.createBaseDom(), scroll = _a.scroll, scroll_bar = _a.scroll_bar, scroll_wrap = _a.scroll_wrap;
-        this.scroll = scroll;
-        this.scroll_bar = scroll_bar;
-        this.scroll_wrap = scroll_wrap;
-        this.scroll_thumb = this.initScrollBar(this.scroll_bar, this.scroll_wrap);
-        this.bindEvent();
+        console.log('reset');
     };
     // 获取当前浏览器中滚动条的宽度
     /*通过创建一个body以外的块状元素outer，给固定宽度，然后在里面添加一个宽度100%的块状元素inner,
@@ -326,17 +318,10 @@ var scrollbar = /** @class */ (function () {
     // 构建基础布局
     scrollbar.prototype.createBaseDom = function () {
         var scroll;
-        if (this.isReset) {
-            scroll = document.getElementById("scroll-" + this.id);
-            this.isReset = false;
-        }
-        else {
-            scroll = document.getElementById(this.id);
-        }
+        scroll = document.getElementById(this.id);
         scroll.innerHTML = '';
         var scroll_wrap = document.createElement('div');
         var scroll_bar = document.createElement('div');
-        scroll.setAttribute('id', "scroll-" + this.id);
         scroll_wrap.setAttribute('id', "scorll_wrap-" + this.id);
         scroll_bar.setAttribute('id', "scroll_bar-" + this.id);
         scroll.className = 'lt-scroll';
@@ -363,7 +348,7 @@ var scrollbar = /** @class */ (function () {
         var precent = parseInt(String(wrap.clientHeight / wrap.scrollHeight * 100)) / 100;
         var barHeight = bar.offsetHeight;
         var thumbHeight = barHeight * precent;
-        var thumbStyle = "height:" + thumbHeight + "px";
+        var thumbStyle = "height:" + thumbHeight + "px;margin-top:" + this.lastScroll + "px";
         thumb.setAttribute('style', thumbStyle);
         this.scroll_thumb = thumb;
         bar.appendChild(thumb);
@@ -381,6 +366,7 @@ var scrollbar = /** @class */ (function () {
             var scroll_Top_self = _this.scroll_bar.offsetHeight * precent;
             _this.scroll_thumb.style.marginTop = scroll_Top_self + "px";
             if (_this.options.loadMore === true) {
+                _this.lastScroll = scroll_Top_self;
                 if (_this.pullTimeer !== null) {
                     clearTimeout(_this.pullTimeer);
                 }
@@ -388,7 +374,6 @@ var scrollbar = /** @class */ (function () {
                     var pullDownNum = _this.scroll_wrap.clientHeight - _this.scroll_thumb.offsetHeight - scroll_Top_self;
                     if (_this.options.pullOffset > pullDownNum) {
                         _this.pull();
-                        _this.resetScroll();
                     }
                 }, 500);
             }
