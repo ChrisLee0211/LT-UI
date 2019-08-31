@@ -320,6 +320,7 @@ class scrollbar implements scrollbar {
     timer: number | null = null;
     lastScroll: number = 0;
     pullTimeer: number | null = null;
+    proxyObj:any
 
     constructor(id: string, options?: scrollOpt) {
         this.originWidth = this.getOriginWidth();
@@ -337,11 +338,6 @@ class scrollbar implements scrollbar {
         this.scroll_wrap = scroll_wrap;
         this.scroll_thumb = this.initScrollBar(this.scroll_bar, this.scroll_wrap);
         this.bindEvent()
-    }
-
-    //重置滚动条:是否需要重建dom结构还是直接修改scrollbar？？？如何保持上次滚动距离？
-    resetScroll() {
-        console.log('reset')
     }
 
     // 获取当前浏览器中滚动条的宽度
@@ -424,6 +420,7 @@ class scrollbar implements scrollbar {
 
     // 为各元素绑定事件
     bindEvent() {
+        this.proxyContent()
         //监测内容滚动
         this.scroll_wrap.addEventListener('scroll', (e: Event) => {
             this.scroll_bar.className = 'lt-scroll-bar lt-scroll-moveOn';
@@ -438,7 +435,9 @@ class scrollbar implements scrollbar {
                 this.pullTimeer = setTimeout(() => {
                     let pullDownNum: number = this.scroll_wrap.clientHeight - this.scroll_thumb.offsetHeight - scroll_Top_self;
                     if (this.options.pullOffset > pullDownNum) {
-                        this.pull();
+                        this.pull(this.scroll_wrap);
+                        // 重新渲染内容，通过数据劫持触发滚动条重新计算机制
+                        this.proxyObj.innerHTML = this.scroll_wrap.innerHTML
                     }
                 }, 500)
 
@@ -446,12 +445,56 @@ class scrollbar implements scrollbar {
             if (this.timer !== null) { clearTimeout(this.timer) }
             this.timer = setTimeout(() => {
                 this.scroll_bar.className = 'lt-scroll-bar lt-scroll-moveOut';
+                this.scroll_thumb.className = 'lt-scroll-thumb .lt-scroll-thumb-reset'
             }, 1000)
+        })
+        //监测鼠标悬浮滚动条
+        this.scroll_bar.addEventListener('mouseover',(e:Event)=>{
+            this.scroll_bar.className = 'lt-scroll-bar lt-scroll-moveOn';
+            this.scroll_thumb.className = 'lt-scroll-thumb lt-scroll-moveOn';
+        })
+        this.scroll_bar.addEventListener('mouseout',(e:Event)=>{
+            this.scroll_bar.className = 'lt-scroll-bar lt-scroll-moveOut';
+            this.scroll_thumb.className = 'lt-scroll-thumb .lt-scroll-thumb-reset'
+        })
+        //监听鼠标点击滚动块
+        this.scroll_thumb.addEventListener('mousedown',(e:Event)=>{
+            this.scroll_thumb.className = 'lt-scroll-thumb lt-scroll-moveOn lt-scroll-click';
+        })
+        this.scroll_thumb.addEventListener('mouseup',(e:Event)=>{
+            this.scroll_thumb.className = 'lt-scroll-thumb lt-scroll-moveOn';
         })
     }
 
     //滚动加载事件钩子
-    pull() {
+    /**
+     * 
+     * @param content 关于dom劫持的Proxy对象，拥有dom对象所有的方法和属性
+     */
+    pull(content:object) {
+
     }
 
+     //重置滚动条:是否需要重建dom结构还是直接修改scrollbar？？？如何保持上次滚动距离？
+     resetScroll() {
+        let precent: number = parseInt(String(this.scroll_wrap.clientHeight / this.scroll_wrap.scrollHeight * 100)) / 100;
+        let barHeight: number = this.scroll_bar.offsetHeight;
+        let thumbHeight: number = barHeight * precent;
+        let thumbStyle: string = `height:${thumbHeight}px;margin-top:${this.lastScroll}px`;
+        this.scroll_thumb.setAttribute('style', thumbStyle);
+    }
+
+    //对滚动内容进行数据绑定，监测内容，发生改变则重新计算滚动条
+    proxyContent(){
+        const that = this;
+        this.proxyObj = new Proxy(this.scroll_wrap,{
+            get(target, key, receiver){
+                return Reflect.get(target,key)
+            },
+            set(target, name, value){
+                that.resetScroll()
+                return Reflect.set(target, name, value)
+            }
+        })
+    }
 }

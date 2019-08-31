@@ -273,10 +273,6 @@ var scrollbar = /** @class */ (function () {
         this.scroll_thumb = this.initScrollBar(this.scroll_bar, this.scroll_wrap);
         this.bindEvent();
     }
-    //重置滚动条:是否需要重建dom结构还是直接修改scrollbar？？？如何保持上次滚动距离？
-    scrollbar.prototype.resetScroll = function () {
-        console.log('reset');
-    };
     // 获取当前浏览器中滚动条的宽度
     /*通过创建一个body以外的块状元素outer，给固定宽度，然后在里面添加一个宽度100%的块状元素inner,
         inner在外层父元素设置了样式overflow:scroll的作用下会出现滚动条，此时用outer的宽减去inner
@@ -357,6 +353,7 @@ var scrollbar = /** @class */ (function () {
     // 为各元素绑定事件
     scrollbar.prototype.bindEvent = function () {
         var _this = this;
+        this.proxyContent();
         //监测内容滚动
         this.scroll_wrap.addEventListener('scroll', function (e) {
             _this.scroll_bar.className = 'lt-scroll-bar lt-scroll-moveOn';
@@ -373,7 +370,9 @@ var scrollbar = /** @class */ (function () {
                 _this.pullTimeer = setTimeout(function () {
                     var pullDownNum = _this.scroll_wrap.clientHeight - _this.scroll_thumb.offsetHeight - scroll_Top_self;
                     if (_this.options.pullOffset > pullDownNum) {
-                        _this.pull();
+                        _this.pull(_this.scroll_wrap);
+                        // 重新渲染内容，通过数据劫持触发滚动条重新计算机制
+                        _this.proxyObj.innerHTML = _this.scroll_wrap.innerHTML;
                     }
                 }, 500);
             }
@@ -382,11 +381,53 @@ var scrollbar = /** @class */ (function () {
             }
             _this.timer = setTimeout(function () {
                 _this.scroll_bar.className = 'lt-scroll-bar lt-scroll-moveOut';
+                _this.scroll_thumb.className = 'lt-scroll-thumb .lt-scroll-thumb-reset';
             }, 1000);
+        });
+        //监测鼠标悬浮滚动条
+        this.scroll_bar.addEventListener('mouseover', function (e) {
+            _this.scroll_bar.className = 'lt-scroll-bar lt-scroll-moveOn';
+            _this.scroll_thumb.className = 'lt-scroll-thumb lt-scroll-moveOn';
+        });
+        this.scroll_bar.addEventListener('mouseout', function (e) {
+            _this.scroll_bar.className = 'lt-scroll-bar lt-scroll-moveOut';
+            _this.scroll_thumb.className = 'lt-scroll-thumb .lt-scroll-thumb-reset';
+        });
+        //监听鼠标点击滚动块
+        this.scroll_thumb.addEventListener('mousedown', function (e) {
+            _this.scroll_thumb.className = 'lt-scroll-thumb lt-scroll-moveOn lt-scroll-click';
+        });
+        this.scroll_thumb.addEventListener('mouseup', function (e) {
+            _this.scroll_thumb.className = 'lt-scroll-thumb lt-scroll-moveOn';
         });
     };
     //滚动加载事件钩子
-    scrollbar.prototype.pull = function () {
+    /**
+     *
+     * @param content 关于dom劫持的Proxy对象，拥有dom对象所有的方法和属性
+     */
+    scrollbar.prototype.pull = function (content) {
+    };
+    //重置滚动条:是否需要重建dom结构还是直接修改scrollbar？？？如何保持上次滚动距离？
+    scrollbar.prototype.resetScroll = function () {
+        var precent = parseInt(String(this.scroll_wrap.clientHeight / this.scroll_wrap.scrollHeight * 100)) / 100;
+        var barHeight = this.scroll_bar.offsetHeight;
+        var thumbHeight = barHeight * precent;
+        var thumbStyle = "height:" + thumbHeight + "px;margin-top:" + this.lastScroll + "px";
+        this.scroll_thumb.setAttribute('style', thumbStyle);
+    };
+    //对滚动内容进行数据绑定，监测内容，发生改变则重新计算滚动条
+    scrollbar.prototype.proxyContent = function () {
+        var that = this;
+        this.proxyObj = new Proxy(this.scroll_wrap, {
+            get: function (target, key, receiver) {
+                return Reflect.get(target, key);
+            },
+            set: function (target, name, value) {
+                that.resetScroll();
+                return Reflect.set(target, name, value);
+            }
+        });
     };
     return scrollbar;
 }());

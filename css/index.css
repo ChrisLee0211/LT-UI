@@ -140,3 +140,9 @@
 .lt-scroll-moveOut {
   opacity: 0;
 }
+.lt-scroll-thumb-reset {
+  transform: scaleY(0.1);
+}
+.lt-scroll-click {
+  background: #141414 !important;
+}

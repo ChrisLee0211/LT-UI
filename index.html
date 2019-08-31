@@ -71,16 +71,14 @@
          loadMore:true,
          pullOffset:20
      });
-     scroll_bar.pull = function getdata(){
+     scroll_bar.pull = function getdata(dom){
          let addtext = `<p  >asdljasdaksdjas</p>
             <p  style="background:green">asdljasdaksdjas</p>
             <p  style="background:green">asdljasdaksdjas</p>`
-        let dom = document.getElementById('scroll');
         let div = document.createElement('div');
         div.innerHTML = addtext;
         dom.appendChild(div)
-        scroll_bar.resetScroll();
-        
+        // console.log(content.innnerHTML)
      }
      
      </script>
