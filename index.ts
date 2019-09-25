@@ -317,10 +317,16 @@ class scrollbar implements scrollbar {
     scroll_wrap: HTMLElement;
     scroll_bar: HTMLElement;
     scroll_thumb: HTMLElement;
+    scroll_precent:number|null = 0;
     timer: number | null = null;
     lastScroll: number = 0;
     pullTimeer: number | null = null;
-    proxyObj:any
+    proxyObj: any;
+    isPress: Boolean = false;
+    thumb_offsetY: number = 0;
+    thumb_offsetX: number = 0;
+    thumb_mouseY:number = 0;
+
 
     constructor(id: string, options?: scrollOpt) {
         this.originWidth = this.getOriginWidth();
@@ -380,7 +386,7 @@ class scrollbar implements scrollbar {
     // 构建基础布局
     createBaseDom() {
         let scroll: HTMLElement;
-     scroll = document.getElementById(this.id) as HTMLElement;
+        scroll = document.getElementById(this.id) as HTMLElement;
         scroll.innerHTML = '';
         let scroll_wrap: HTMLElement = document.createElement('div');
         let scroll_bar: HTMLElement = document.createElement('div');
@@ -411,8 +417,9 @@ class scrollbar implements scrollbar {
         let precent: number = parseInt(String(wrap.clientHeight / wrap.scrollHeight * 100)) / 100;
         let barHeight: number = bar.offsetHeight;
         let thumbHeight: number = barHeight * precent;
-        let thumbStyle: string = `height:${thumbHeight}px;margin-top:${this.lastScroll}px`;
+        let thumbStyle: string = `height:${thumbHeight}px;transform:translateY(${this.lastScroll}px)`;
         thumb.setAttribute('style', thumbStyle);
+        thumb.setAttribute('id', `scroll_thumb-${this.id}`)
         this.scroll_thumb = thumb;
         bar.appendChild(thumb);
         return thumb
@@ -420,78 +427,129 @@ class scrollbar implements scrollbar {
 
     // 为各元素绑定事件
     bindEvent() {
+        const that = this;
         this.proxyContent()
         //监测内容滚动
         this.scroll_wrap.addEventListener('scroll', (e: Event) => {
-            this.scroll_bar.className = 'lt-scroll-bar lt-scroll-moveOn';
-            this.scroll_thumb.className = 'lt-scroll-thumb lt-scroll-moveOn';
-            let scroll_top_origin: number = this.scroll_wrap.scrollTop;
-            let precent: number = parseInt(String(scroll_top_origin / this.scroll_wrap.scrollHeight * 100)) / 100;
-            let scroll_Top_self: number = this.scroll_bar.offsetHeight * precent;
-            this.scroll_thumb.style.marginTop = `${scroll_Top_self}px`
-            if (this.options.loadMore === true) {
-                this.lastScroll = scroll_Top_self;
-                if (this.pullTimeer !== null) { clearTimeout(this.pullTimeer) }
-                this.pullTimeer = setTimeout(() => {
-                    let pullDownNum: number = this.scroll_wrap.clientHeight - this.scroll_thumb.offsetHeight - scroll_Top_self;
-                    if (this.options.pullOffset > pullDownNum) {
-                        this.pull(this.scroll_wrap);
-                        // 重新渲染内容，通过数据劫持触发滚动条重新计算机制
-                        this.proxyObj.innerHTML = this.scroll_wrap.innerHTML
-                    }
-                }, 500)
+            //滚轮以及触摸滚动模式下
+            if (this.isPress === false) {
+                this.scroll_bar.className = 'lt-scroll-bar lt-scroll-moveOn';
+                this.scroll_thumb.className = 'lt-scroll-thumb lt-scroll-moveOn';
+                let scroll_top_origin: number = this.scroll_wrap.scrollTop;
+                //原生滚动条的滑动距离与滚动条长度的占比关系
+                let precent: number = parseInt(String(scroll_top_origin / this.scroll_wrap.scrollHeight * 100)) / 100;
+                this.scroll_precent = precent;
+                let scroll_Top_self: number = this.scroll_bar.offsetHeight * precent;
+                this.scroll_thumb.style.transform = `translateY(${scroll_Top_self}px)`
+                if (this.options.loadMore === true) {
+                    this.lastScroll = scroll_Top_self;
+                    if (this.pullTimeer) { clearTimeout(this.pullTimeer) }
+                    this.pullTimeer = setTimeout(() => {
+                        let pullDownNum: number = this.scroll_wrap.clientHeight - this.scroll_thumb.offsetHeight - scroll_Top_self;
+                        if (this.options.pullOffset > pullDownNum) {
+                            this.pull(this.scroll_wrap);
+                            // 重新渲染内容，通过数据劫持触发滚动条重新计算机制
+                            this.proxyObj.innerHTML = this.scroll_wrap.innerHTML
+                        }
+                    }, 500)
+                }
+                if (this.timer) { clearTimeout(this.timer) }
+                this.timer = setTimeout(() => {
+                    this.scroll_bar.className = 'lt-scroll-bar lt-scroll-moveOut';
+                    this.scroll_thumb.className = 'lt-scroll-thumb .lt-scroll-thumb-reset'
+                }, 1000)
+            }
+            // 拖拽滚动条的情况下
+            if(this.isPress === true){
 
             }
-            if (this.timer !== null) { clearTimeout(this.timer) }
-            this.timer = setTimeout(() => {
-                this.scroll_bar.className = 'lt-scroll-bar lt-scroll-moveOut';
-                this.scroll_thumb.className = 'lt-scroll-thumb .lt-scroll-thumb-reset'
-            }, 1000)
         })
         //监测鼠标悬浮滚动条
-        this.scroll_bar.addEventListener('mouseover',(e:Event)=>{
+        this.scroll_bar.addEventListener('mouseover', (e: Event) => {
             this.scroll_bar.className = 'lt-scroll-bar lt-scroll-moveOn';
             this.scroll_thumb.className = 'lt-scroll-thumb lt-scroll-moveOn';
         })
-        this.scroll_bar.addEventListener('mouseout',(e:Event)=>{
+        this.scroll_bar.addEventListener('mouseout', (e: Event) => {
+            if (this.isPress === true) return
             this.scroll_bar.className = 'lt-scroll-bar lt-scroll-moveOut';
             this.scroll_thumb.className = 'lt-scroll-thumb .lt-scroll-thumb-reset'
         })
-        //监听鼠标点击滚动块
-        this.scroll_thumb.addEventListener('mousedown',(e:Event)=>{
-            this.scroll_thumb.className = 'lt-scroll-thumb lt-scroll-moveOn lt-scroll-click';
+        let getMousePosition = this.getMousePosition
+        //拖拽tumb的计算函数
+        let dragTumb = function(e:MouseEvent){
+            if(that.isPress===true){
+                let thumb_height:number = that.scroll_thumb.offsetHeight;
+                let bar_height:number = that.scroll_bar.offsetHeight;
+                let y:number = that.getMousePosition(e).y - that.thumb_mouseY;
+                let height = that.scroll_bar.clientHeight - that.scroll_thumb.offsetHeight;
+                let scroll_top = Math.min(Math.max(0, y), height);
+                that.scroll_thumb.style.transform = `translateY(${scroll_top}px)`
+            }
+        }
+        
+        //监测鼠标点击thumb
+        this.scroll_thumb.addEventListener('mousedown',(e:MouseEvent)=>{
+            this.isPress = true;
+            //笔记备注：点击前还需考虑是从顶部开始拖拽还是中间开始，如果是中间的话，那么元素距离页面顶部的距离
+            //就要加上上次滑动的距离，另外上次滑动的距离lastScroll与滚动条距离存在比例关系
+            //元素距离页面顶部的距离
+            this.thumb_offsetY =this.scroll_thumb.offsetTop;
+            //鼠标距离顶部的距离
+            let mouseY:number = this.getMousePosition(e).y;
+            //鼠标距离元素顶部的距离
+            this.thumb_mouseY = mouseY - this.thumb_offsetY;
+            document.onselectstart = () => false;
+            this.scroll_thumb.className='lt-scroll-thumb lt-scroll-moveOn lt-scroll-click'
+            this.scroll_thumb.addEventListener('mousemove',dragTumb)
         })
-        this.scroll_thumb.addEventListener('mouseup',(e:Event)=>{
-            this.scroll_thumb.className = 'lt-scroll-thumb lt-scroll-moveOn';
+        this.scroll_thumb.addEventListener('mouseup',(e:MouseEvent)=>{
+            this.isPress = false;
+            this.scroll_thumb.removeEventListener('mousemove',dragTumb)
+            this.scroll_thumb.className='lt-scroll-thumb lt-scroll-moveOn'
+            document.onselectstart = null;
         })
     }
-
     //滚动加载事件钩子
     /**
-     * 
-     * @param content 关于dom劫持的Proxy对象，拥有dom对象所有的方法和属性
+     * @param content 包含了被包裹内容的dom元素
      */
-    pull(content:object) {
+    pull(content: object) {
 
     }
 
-     //重置滚动条:是否需要重建dom结构还是直接修改scrollbar？？？如何保持上次滚动距离？
-     resetScroll() {
+    /**
+     * 获取鼠标X位置
+     * @param event 触发的事件模型
+     */
+    getMousePosition(e:MouseEvent){
+        let x:number,y:number;
+        if (e.pageX) {
+            x = e.pageX
+            y = e.pageY
+        } else {
+            x = e.clientX + document.body.scrollLeft - document.body.clientLeft
+            y = e.clientY + document.body.scrollTop - document.body.clientTop
+        }
+        return {x:x,y:y}
+    }
+
+    //重置滚动条:是否需要重建dom结构还是直接修改scrollbar？？？如何保持上次滚动距离？
+    resetScroll() {
         let precent: number = parseInt(String(this.scroll_wrap.clientHeight / this.scroll_wrap.scrollHeight * 100)) / 100;
         let barHeight: number = this.scroll_bar.offsetHeight;
         let thumbHeight: number = barHeight * precent;
-        let thumbStyle: string = `height:${thumbHeight}px;margin-top:${this.lastScroll}px`;
+        let thumbStyle: string = `height:${thumbHeight}px;transform:translateY(${this.lastScroll}px)`;
         this.scroll_thumb.setAttribute('style', thumbStyle);
     }
 
     //对滚动内容进行数据绑定，监测内容，发生改变则重新计算滚动条
-    proxyContent(){
+    proxyContent() {
         const that = this;
-        this.proxyObj = new Proxy(this.scroll_wrap,{
-            get(target, key, receiver){
-                return Reflect.get(target,key)
+        this.proxyObj = new Proxy(this.scroll_wrap, {
+            get(target, key, receiver) {
+                return Reflect.get(target, key)
             },
-            set(target, name, value){
+            set(target, name, value) {
                 that.resetScroll()
                 return Reflect.set(target, name, value)
             }
