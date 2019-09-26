@@ -414,9 +414,7 @@ var scrollbar = /** @class */ (function () {
         //拖拽tumb的计算函数
         var dragTumb = function (e) {
             if (that.isPress === true) {
-                var thumb_height = that.scroll_thumb.offsetHeight;
-                var bar_height = that.scroll_bar.offsetHeight;
-                var y = that.getMousePosition(e).y - that.thumb_mouseY;
+                var y = that.getMousePosition(e).y + that.lastScroll - that.thumb_mouseY;
                 var height = that.scroll_bar.clientHeight - that.scroll_thumb.offsetHeight;
                 var scroll_top = Math.min(Math.max(0, y), height);
                 that.scroll_thumb.style.transform = "translateY(" + scroll_top + "px)";
@@ -442,6 +440,12 @@ var scrollbar = /** @class */ (function () {
             _this.scroll_thumb.removeEventListener('mousemove', dragTumb);
             _this.scroll_thumb.className = 'lt-scroll-thumb lt-scroll-moveOn';
             document.onselectstart = null;
+            if (that.scroll_thumb.style.transform !== null) {
+                //获取上次停留的滚动距离，再下一次拖拽时以此为基础
+                var s = that.scroll_thumb.style.transform.split(')')[0].split('(')[1].split("p")[0];
+                _this.lastScroll = parseInt(s);
+            }
+            console.log(_this.lastScroll);
         });
     };
     //滚动加载事件钩子

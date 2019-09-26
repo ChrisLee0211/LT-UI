@@ -478,9 +478,7 @@ class scrollbar implements scrollbar {
         //拖拽tumb的计算函数
         let dragTumb = function(e:MouseEvent){
             if(that.isPress===true){
-                let thumb_height:number = that.scroll_thumb.offsetHeight;
-                let bar_height:number = that.scroll_bar.offsetHeight;
-                let y:number = that.getMousePosition(e).y - that.thumb_mouseY;
+                let y:number = that.getMousePosition(e).y + that.lastScroll- that.thumb_mouseY;
                 let height = that.scroll_bar.clientHeight - that.scroll_thumb.offsetHeight;
                 let scroll_top = Math.min(Math.max(0, y), height);
                 that.scroll_thumb.style.transform = `translateY(${scroll_top}px)`
@@ -507,6 +505,12 @@ class scrollbar implements scrollbar {
             this.scroll_thumb.removeEventListener('mousemove',dragTumb)
             this.scroll_thumb.className='lt-scroll-thumb lt-scroll-moveOn'
             document.onselectstart = null;
+            if(that.scroll_thumb.style.transform!==null){
+                //获取上次停留的滚动距离，再下一次拖拽时以此为基础
+                let s = that.scroll_thumb.style.transform.split(')')[0].split('(')[1].split("p")[0];
+                this.lastScroll = parseInt(s)
+            }
+            console.log(this.lastScroll)
         })
     }
     //滚动加载事件钩子
