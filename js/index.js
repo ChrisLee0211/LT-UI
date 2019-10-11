@@ -434,10 +434,17 @@ var scrollbar = /** @class */ (function () {
             document.onselectstart = function () { return false; };
             _this.scroll_thumb.className = 'lt-scroll-thumb lt-scroll-moveOn lt-scroll-click';
             _this.scroll_thumb.addEventListener('mousemove', dragTumb);
+            document.body.addEventListener('mousemove', dragTumb);
+        });
+        document.body.addEventListener('mouseup', function (e) {
+            document.body.removeEventListener('mousemove', dragTumb);
+            _this.scroll_thumb.removeEventListener('mousemove', dragTumb);
+            _this.scroll_thumb.className = 'lt-scroll-thumb lt-scroll-moveOn';
         });
         this.scroll_thumb.addEventListener('mouseup', function (e) {
             _this.isPress = false;
             _this.scroll_thumb.removeEventListener('mousemove', dragTumb);
+            document.body.removeEventListener('mousemove', dragTumb);
             _this.scroll_thumb.className = 'lt-scroll-thumb lt-scroll-moveOn';
             document.onselectstart = null;
             if (that.scroll_thumb.style.transform !== null) {
@@ -445,7 +452,6 @@ var scrollbar = /** @class */ (function () {
                 var s = that.scroll_thumb.style.transform.split(')')[0].split('(')[1].split("p")[0];
                 _this.lastScroll = parseInt(s);
             }
-            console.log(_this.lastScroll);
         });
     };
     //滚动加载事件钩子

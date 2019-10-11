@@ -498,11 +498,18 @@ class scrollbar implements scrollbar {
             this.thumb_mouseY = mouseY - this.thumb_offsetY;
             document.onselectstart = () => false;
             this.scroll_thumb.className='lt-scroll-thumb lt-scroll-moveOn lt-scroll-click'
-            this.scroll_thumb.addEventListener('mousemove',dragTumb)
+            this.scroll_thumb.addEventListener('mousemove',dragTumb);
+            document.body.addEventListener('mousemove',dragTumb);
+        })
+        document.body.addEventListener('mouseup',(e:MouseEvent)=>{
+            document.body.removeEventListener('mousemove',dragTumb);
+            this.scroll_thumb.removeEventListener('mousemove',dragTumb);
+            this.scroll_thumb.className='lt-scroll-thumb lt-scroll-moveOn'
         })
         this.scroll_thumb.addEventListener('mouseup',(e:MouseEvent)=>{
             this.isPress = false;
-            this.scroll_thumb.removeEventListener('mousemove',dragTumb)
+            this.scroll_thumb.removeEventListener('mousemove',dragTumb);
+            document.body.removeEventListener('mousemove',dragTumb);
             this.scroll_thumb.className='lt-scroll-thumb lt-scroll-moveOn'
             document.onselectstart = null;
             if(that.scroll_thumb.style.transform!==null){
@@ -510,7 +517,6 @@ class scrollbar implements scrollbar {
                 let s = that.scroll_thumb.style.transform.split(')')[0].split('(')[1].split("p")[0];
                 this.lastScroll = parseInt(s)
             }
-            console.log(this.lastScroll)
         })
     }
     //滚动加载事件钩子
