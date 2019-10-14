@@ -481,7 +481,8 @@ class scrollbar implements scrollbar {
                 let y:number = that.getMousePosition(e).y + that.lastScroll- that.thumb_mouseY;
                 let height = that.scroll_bar.clientHeight - that.scroll_thumb.offsetHeight;
                 let scroll_top = Math.min(Math.max(0, y), height);
-                that.scroll_thumb.style.transform = `translateY(${scroll_top}px)`
+                that.scroll_thumb.style.transform = `translateY(${scroll_top}px)`;
+                that.scroll_wrap.scrollTo(0,scroll_top)
             }
         }
         
@@ -499,12 +500,21 @@ class scrollbar implements scrollbar {
             document.onselectstart = () => false;
             this.scroll_thumb.className='lt-scroll-thumb lt-scroll-moveOn lt-scroll-click'
             this.scroll_thumb.addEventListener('mousemove',dragTumb);
+            //把拖拽事件同时绑定到全局body上，防止拖拽过程中超出边界
             document.body.addEventListener('mousemove',dragTumb);
         })
+
+        //保证拖拽手势在拖动过程中超出边界后松开鼠标也不影响功能，
         document.body.addEventListener('mouseup',(e:MouseEvent)=>{
             document.body.removeEventListener('mousemove',dragTumb);
             this.scroll_thumb.removeEventListener('mousemove',dragTumb);
-            this.scroll_thumb.className='lt-scroll-thumb lt-scroll-moveOn'
+            this.scroll_thumb.className='lt-scroll-thumb lt-scroll-moveOn';
+            document.onselectstart = null;
+            if(that.scroll_thumb.style.transform!==null){
+                //获取上次停留的滚动距离，再下一次拖拽时以此为基础
+                let s = that.scroll_thumb.style.transform.split(')')[0].split('(')[1].split("p")[0];
+                this.lastScroll = parseInt(s)
+            }
         })
         this.scroll_thumb.addEventListener('mouseup',(e:MouseEvent)=>{
             this.isPress = false;
