@@ -317,7 +317,6 @@ class scrollbar implements scrollbar {
     scroll_wrap: HTMLElement;
     scroll_bar: HTMLElement;
     scroll_thumb: HTMLElement;
-    scroll_precent:number|null = 0;
     timer: number | null = null;
     lastScroll: number = 0;
     pullTimeer: number | null = null;
@@ -438,7 +437,6 @@ class scrollbar implements scrollbar {
                 let scroll_top_origin: number = this.scroll_wrap.scrollTop;
                 //原生滚动条的滑动距离与滚动条长度的占比关系
                 let precent: number = parseInt(String(scroll_top_origin / this.scroll_wrap.scrollHeight * 100)) / 100;
-                this.scroll_precent = precent;
                 let scroll_Top_self: number = this.scroll_bar.offsetHeight * precent;
                 this.scroll_thumb.style.transform = `translateY(${scroll_Top_self}px)`
                 if (this.options.loadMore === true) {
@@ -457,11 +455,10 @@ class scrollbar implements scrollbar {
                 this.timer = setTimeout(() => {
                     this.scroll_bar.className = 'lt-scroll-bar lt-scroll-moveOut';
                     this.scroll_thumb.className = 'lt-scroll-thumb .lt-scroll-thumb-reset'
-                }, 1000)
+                }, 2000)
             }
             // 拖拽滚动条的情况下
             if(this.isPress === true){
-
             }
         })
         //监测鼠标悬浮滚动条
@@ -482,7 +479,10 @@ class scrollbar implements scrollbar {
                 let height = that.scroll_bar.clientHeight - that.scroll_thumb.offsetHeight;
                 let scroll_top = Math.min(Math.max(0, y), height);
                 that.scroll_thumb.style.transform = `translateY(${scroll_top}px)`;
-                that.scroll_wrap.scrollTo(0,scroll_top)
+                let bar_height:number = that.scroll_bar.offsetHeight;
+                let wrap_scrollHeight:number = that.scroll_wrap.scrollHeight;
+                let precent:number = parseInt(String(scroll_top / bar_height * 100)) / 100;
+                that.scroll_wrap.scrollTo(0,wrap_scrollHeight*precent)
             }
         }
         
@@ -506,6 +506,7 @@ class scrollbar implements scrollbar {
 
         //保证拖拽手势在拖动过程中超出边界后松开鼠标也不影响功能，
         document.body.addEventListener('mouseup',(e:MouseEvent)=>{
+            this.isPress = false;
             document.body.removeEventListener('mousemove',dragTumb);
             this.scroll_thumb.removeEventListener('mousemove',dragTumb);
             this.scroll_thumb.className='lt-scroll-thumb lt-scroll-moveOn';
@@ -515,6 +516,11 @@ class scrollbar implements scrollbar {
                 let s = that.scroll_thumb.style.transform.split(')')[0].split('(')[1].split("p")[0];
                 this.lastScroll = parseInt(s)
             }
+            if (this.timer) { clearTimeout(this.timer) }
+                this.timer = setTimeout(() => {
+                    this.scroll_bar.className = 'lt-scroll-bar lt-scroll-moveOut';
+                    this.scroll_thumb.className = 'lt-scroll-thumb .lt-scroll-thumb-reset'
+                }, 2000)
         })
         this.scroll_thumb.addEventListener('mouseup',(e:MouseEvent)=>{
             this.isPress = false;
@@ -534,6 +540,10 @@ class scrollbar implements scrollbar {
      * @param content 包含了被包裹内容的dom元素
      */
     pull(content: object) {
+
+    }
+    
+    triggerPull():void{
 
     }
 

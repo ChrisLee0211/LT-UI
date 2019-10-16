@@ -253,7 +253,6 @@ var Input = /** @class */ (function () {
 var scrollbar = /** @class */ (function () {
     function scrollbar(id, options) {
         this.originWidth = '';
-        this.scroll_precent = 0;
         this.timer = null;
         this.lastScroll = 0;
         this.pullTimeer = null;
@@ -370,7 +369,6 @@ var scrollbar = /** @class */ (function () {
                 var scroll_top_origin = _this.scroll_wrap.scrollTop;
                 //原生滚动条的滑动距离与滚动条长度的占比关系
                 var precent = parseInt(String(scroll_top_origin / _this.scroll_wrap.scrollHeight * 100)) / 100;
-                _this.scroll_precent = precent;
                 var scroll_Top_self_1 = _this.scroll_bar.offsetHeight * precent;
                 _this.scroll_thumb.style.transform = "translateY(" + scroll_Top_self_1 + "px)";
                 if (_this.options.loadMore === true) {
@@ -393,7 +391,7 @@ var scrollbar = /** @class */ (function () {
                 _this.timer = setTimeout(function () {
                     _this.scroll_bar.className = 'lt-scroll-bar lt-scroll-moveOut';
                     _this.scroll_thumb.className = 'lt-scroll-thumb .lt-scroll-thumb-reset';
-                }, 1000);
+                }, 2000);
             }
             // 拖拽滚动条的情况下
             if (_this.isPress === true) {
@@ -418,7 +416,10 @@ var scrollbar = /** @class */ (function () {
                 var height = that.scroll_bar.clientHeight - that.scroll_thumb.offsetHeight;
                 var scroll_top = Math.min(Math.max(0, y), height);
                 that.scroll_thumb.style.transform = "translateY(" + scroll_top + "px)";
-                that.scroll_wrap.scrollTo(0, scroll_top);
+                var bar_height = that.scroll_bar.offsetHeight;
+                var wrap_scrollHeight = that.scroll_wrap.scrollHeight;
+                var precent = parseInt(String(scroll_top / bar_height * 100)) / 100;
+                that.scroll_wrap.scrollTo(0, wrap_scrollHeight * precent);
             }
         };
         //监测鼠标点击thumb
@@ -440,6 +441,7 @@ var scrollbar = /** @class */ (function () {
         });
         //保证拖拽手势在拖动过程中超出边界后松开鼠标也不影响功能，
         document.body.addEventListener('mouseup', function (e) {
+            _this.isPress = false;
             document.body.removeEventListener('mousemove', dragTumb);
             _this.scroll_thumb.removeEventListener('mousemove', dragTumb);
             _this.scroll_thumb.className = 'lt-scroll-thumb lt-scroll-moveOn';
@@ -449,6 +451,13 @@ var scrollbar = /** @class */ (function () {
                 var s = that.scroll_thumb.style.transform.split(')')[0].split('(')[1].split("p")[0];
                 _this.lastScroll = parseInt(s);
             }
+            if (_this.timer) {
+                clearTimeout(_this.timer);
+            }
+            _this.timer = setTimeout(function () {
+                _this.scroll_bar.className = 'lt-scroll-bar lt-scroll-moveOut';
+                _this.scroll_thumb.className = 'lt-scroll-thumb .lt-scroll-thumb-reset';
+            }, 2000);
         });
         this.scroll_thumb.addEventListener('mouseup', function (e) {
             _this.isPress = false;
@@ -468,6 +477,8 @@ var scrollbar = /** @class */ (function () {
      * @param content 包含了被包裹内容的dom元素
      */
     scrollbar.prototype.pull = function (content) {
+    };
+    scrollbar.prototype.triggerPull = function () {
     };
     /**
      * 获取鼠标X位置
