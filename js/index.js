@@ -377,8 +377,8 @@ var scrollbar = /** @class */ (function () {
                         clearTimeout(_this.pullTimeer);
                     }
                     _this.pullTimeer = setTimeout(function () {
-                        var pullDownNum = _this.scroll_wrap.clientHeight - _this.scroll_thumb.offsetHeight - scroll_Top_self_1;
-                        if (_this.options.pullOffset > pullDownNum) {
+                        var finalScrollTop = _this.scroll_bar.offsetHeight - _this.scroll_thumb.offsetHeight - scroll_Top_self_1;
+                        if (_this.options.pullOffset > finalScrollTop) {
                             _this.pull(_this.scroll_wrap);
                             // 重新渲染内容，通过数据劫持触发滚动条重新计算机制
                             _this.proxyObj.innerHTML = _this.scroll_wrap.innerHTML;
@@ -450,6 +450,19 @@ var scrollbar = /** @class */ (function () {
                 //获取上次停留的滚动距离，再下一次拖拽时以此为基础
                 var s = that.scroll_thumb.style.transform.split(')')[0].split('(')[1].split("p")[0];
                 _this.lastScroll = parseInt(s);
+            }
+            if (_this.options.loadMore === true) {
+                if (_this.pullTimeer) {
+                    clearTimeout(_this.pullTimeer);
+                }
+                _this.pullTimeer = setTimeout(function () {
+                    var finalScrollTop = _this.scroll_bar.offsetHeight - _this.scroll_thumb.offsetHeight - _this.lastScroll;
+                    if (_this.options.pullOffset > finalScrollTop) {
+                        _this.pull(_this.scroll_wrap);
+                        // 重新渲染内容，通过数据劫持触发滚动条重新计算机制
+                        _this.proxyObj.innerHTML = _this.scroll_wrap.innerHTML;
+                    }
+                }, 500);
             }
             if (_this.timer) {
                 clearTimeout(_this.timer);

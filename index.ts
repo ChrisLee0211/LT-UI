@@ -443,8 +443,8 @@ class scrollbar implements scrollbar {
                     this.lastScroll = scroll_Top_self;
                     if (this.pullTimeer) { clearTimeout(this.pullTimeer) }
                     this.pullTimeer = setTimeout(() => {
-                        let pullDownNum: number = this.scroll_wrap.clientHeight - this.scroll_thumb.offsetHeight - scroll_Top_self;
-                        if (this.options.pullOffset > pullDownNum) {
+                        let finalScrollTop: number = this.scroll_bar.offsetHeight - this.scroll_thumb.offsetHeight - scroll_Top_self;
+                        if (this.options.pullOffset > finalScrollTop) {
                             this.pull(this.scroll_wrap);
                             // 重新渲染内容，通过数据劫持触发滚动条重新计算机制
                             this.proxyObj.innerHTML = this.scroll_wrap.innerHTML
@@ -516,6 +516,18 @@ class scrollbar implements scrollbar {
                 let s = that.scroll_thumb.style.transform.split(')')[0].split('(')[1].split("p")[0];
                 this.lastScroll = parseInt(s)
             }
+            if(this.options.loadMore === true){
+                if (this.pullTimeer) { clearTimeout(this.pullTimeer) }
+                    this.pullTimeer = setTimeout(() => {
+                        let finalScrollTop: number = this.scroll_bar.offsetHeight - this.scroll_thumb.offsetHeight - this.lastScroll;
+                        if (this.options.pullOffset > finalScrollTop) {
+                            this.pull(this.scroll_wrap);
+                            // 重新渲染内容，通过数据劫持触发滚动条重新计算机制
+                            this.proxyObj.innerHTML = this.scroll_wrap.innerHTML
+                        }
+                    }, 500)
+            }
+
             if (this.timer) { clearTimeout(this.timer) }
                 this.timer = setTimeout(() => {
                     this.scroll_bar.className = 'lt-scroll-bar lt-scroll-moveOut';
