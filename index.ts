@@ -431,9 +431,9 @@ class scrollbar implements scrollbar {
         //监测内容滚动
         this.scroll_wrap.addEventListener('scroll', (e: Event) => {
             //滚轮以及触摸滚动模式下
+            this.scroll_bar.className = 'lt-scroll-bar lt-scroll-moveOn';
+            this.scroll_thumb.className = 'lt-scroll-thumb lt-scroll-moveOn';
             if (this.isPress === false) {
-                this.scroll_bar.className = 'lt-scroll-bar lt-scroll-moveOn';
-                this.scroll_thumb.className = 'lt-scroll-thumb lt-scroll-moveOn';
                 let scroll_top_origin: number = this.scroll_wrap.scrollTop;
                 //原生滚动条的滑动距离与滚动条长度的占比关系
                 let precent: number = parseInt(String(scroll_top_origin / this.scroll_wrap.scrollHeight * 100)) / 100;

@@ -363,9 +363,9 @@ var scrollbar = /** @class */ (function () {
         //监测内容滚动
         this.scroll_wrap.addEventListener('scroll', function (e) {
             //滚轮以及触摸滚动模式下
+            _this.scroll_bar.className = 'lt-scroll-bar lt-scroll-moveOn';
+            _this.scroll_thumb.className = 'lt-scroll-thumb lt-scroll-moveOn';
             if (_this.isPress === false) {
-                _this.scroll_bar.className = 'lt-scroll-bar lt-scroll-moveOn';
-                _this.scroll_thumb.className = 'lt-scroll-thumb lt-scroll-moveOn';
                 var scroll_top_origin = _this.scroll_wrap.scrollTop;
                 //原生滚动条的滑动距离与滚动条长度的占比关系
                 var precent = parseInt(String(scroll_top_origin / _this.scroll_wrap.scrollHeight * 100)) / 100;
