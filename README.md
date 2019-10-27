@@ -7,7 +7,7 @@
 * [2.输入框](#input)
 
 ### 二、通用类组件：
-* [1.滚动条](#scrollBar)
+* [1.滚动条](#scroll-bar)
 
 
 
@@ -184,7 +184,9 @@
 | blur      |    value(当前输入文本)  | 输入框失去焦点时触发 |
 | change      |    value(当前输入文本)  | 输入框内容改变时触发 |
 
-# scrollBar
+
+
+# scroll-bar
 一个淡入淡出，自定义样式的滚动条
 
 ## 效果预览：
@@ -216,3 +218,79 @@
 - 监测内容变化来更新自己的滚动块高度
 - 暴露钩子用于开发如：下拉至底部
 
+### 2019.09.13
+- 完成暴露钩子：下拉至底部
+- 通过proxy双向绑定内容，实现监测内容变化实时更新滚动条高高度
+
+待完成功能：
+- 实现手动拖拽情况下的滚动条逻辑
+- 拖拽情况下的下拉加载功能
+
+### 2019.10.08
+- 完成手动拖拽交互效果
+
+待完成功能：
+- 拖拽情况下的下拉加载
+- 拖拽情况下的鼠标超出滚动条边界的处理逻辑
+
+### 2019.10.27
+- 完成拖拽情况下所有逻辑
+
+待完成功能：
+- 抽离逻辑，重新规范结构以便维护
+- 开发vue和react版本
+- 开发横向滚动模式
+
+## 使用方法：
+一、引入`js`、`css`文件  
+二、根据以下示例使用：
+```html
+<body>
+<!--  必须设置外部元素包裹且外部元素需有确切的宽高才可以生成滚动条    -->
+    <div class="main" > 
+        <LT-scroll id="scroll">
+            <p  >今晚大陆送活动哦冬季送到惊悚的浓雾饿哦我玩弄是董事局董事的浓</p>
+            <p  style="background:grey">asdljasdaksdjas</p>
+            <p  style="background:white">asdljasdaksdjas</p>
+            <p  >asdljasdaksdjas</p>
+            <p  style="background:grey">asdljasdaksdjas</p>
+            <p  style="background:white">asdljasdaksdjas</p>
+            <p  >asdljasdaksdjas</p>
+        </LT-scroll>
+    </div>
+    <script>
+        
+     let scroll_bar = new scrollbar('scroll',{
+         loadMore:true,
+         pullOffset:20
+     });
+        //这里演示的是下拉加载功能
+     scroll_bar.pull = function getdata(dom){
+         let addtext = `<p  >asdljasdaksdjas</p>
+            <p  style="background:green">asdljasdaksdjas</p>
+            <p  style="background:green">asdljasdaksdjas</p>`
+        let div = document.createElement('div');
+        div.innerHTML = addtext;
+        dom.appendChild(div)
+        // console.log(content.innnerHTML)
+     }
+     
+     </script>
+</body>
+
+```
+
+三、可设置属性与方法  
+
+属性：（实例化中传入的参数如:`let scroll_bar = new scrollbar(id,options)`)
+
+|    属性名  | 类型        |        描述 |
+| ---------- | -----------| ----------- |
+| id      |    string  | 初始化滚动条元素的id |
+| options     |     object | 额外配置项：目前支持loadMore:true/false（是否支持下拉加载更多）、pullOffset:0(下拉至底部多少距离时出发加载函数) |
+
+钩子：（供使用者在指定的生命周期触发的事件）
+
+|    钩子名称  | 回调参数        |        描述 |
+| ---------- | -----------| ----------- |
+| pull      |    HTMLELement(被滚动条包裹的dom元素)  | 下拉加载时要触发的函数逻辑 |
