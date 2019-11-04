@@ -296,7 +296,7 @@ class Input implements Input {
 
 }
 
-interface scrollbar {
+interface scrollBar {
     originWidth: string | number,
     id: string,
     options: scrollOpt,
@@ -308,7 +308,7 @@ interface scrollOpt {
     pullOffset: number
 }
 
-class scrollbar implements scrollbar {
+class scrollbar implements scrollBar {
     originWidth: string | number = '';
     id: string;
     options: scrollOpt;
@@ -317,11 +317,11 @@ class scrollbar implements scrollbar {
     scroll_wrap: HTMLElement;
     scroll_bar: HTMLElement;
     scroll_thumb: HTMLElement;
-    timer: number | null = null;
-    lastScroll: number = 0;
-    pullTimeer: number | null = null;
+    private timer: number | null = null;
+    private lastScroll: number = 0;
+    private pullTimeer: number | null = null;
     proxyObj: any;
-    isPress: Boolean = false;
+    private isPress: Boolean = false;
     thumb_offsetY: number = 0;
     thumb_offsetX: number = 0;
     thumb_mouseY:number = 0;
@@ -400,9 +400,9 @@ class scrollbar implements scrollbar {
         scroll_wrap.innerHTML = this.content;
         scroll.appendChild(scroll_wrap);
         scroll.appendChild(scroll_bar);
-
         return { scroll, scroll_wrap, scroll_bar }
     }
+
     //组装滑动条
     initScrollBar(bar: HTMLElement, wrap: HTMLElement) {
         let barWidth: string | number = Number(this.originWidth) * 0.4;
@@ -547,15 +547,12 @@ class scrollbar implements scrollbar {
             }
         })
     }
+
     //滚动加载事件钩子
     /**
      * @param content 包含了被包裹内容的dom元素
      */
     pull(content: object) {
-
-    }
-    
-    triggerPull():void{
 
     }
 
@@ -597,4 +594,46 @@ class scrollbar implements scrollbar {
             }
         })
     }
+}
+
+class scrollbar_x implements scrollBar {
+    originWidth: string | number;
+    id: string;
+    options: scrollOpt;
+    constructor(id: string, options?: scrollOpt){
+        this.originWidth = this.getOriginWidth();
+        this.id = id;
+        if (options) {
+            this.options = options;
+        } else {
+            this.options = { loadMore: false, pullOffset: 0 }
+        }
+    }
+    getOriginWidth():number{
+        let O_width;
+        const outer: HTMLElement = document.createElement('div');
+        outer.style.width = "100px";
+        outer.style.visibility = 'hidden'; //不能用display:none,因为会直接不存在该节点
+        outer.style.position = 'absolute';
+        outer.style.top = '-9999px';
+        outer.style.overflow = "scroll";
+        document.body.appendChild(outer);
+        const inner: HTMLElement = document.createElement('div');
+        inner.style.width = "100%";
+        outer.appendChild(inner);
+        const outer_width: number = outer.offsetWidth;
+        const inner_width: number = inner.offsetWidth;
+        if (outer.parentNode) {
+            outer.parentNode.removeChild(outer)
+        } else {
+            document.body.removeChild(outer)
+        }
+        O_width = outer_width - inner_width;
+        if (O_width === 0) {
+            O_width = 25
+        }
+        return O_width
+    }
+
+
 }
