@@ -18,7 +18,7 @@
   font-size: 10px;
   text-shadow: gray 1px 0 10px;
   letter-spacing: 1px;
-  transition: transform .5s linear;
+  transition: transform 0.5s linear;
 }
 .lt-slide-wrap .lt-slide-block {
   height: 50px;
@@ -32,7 +32,7 @@
   position: absolute;
   left: 0;
   top: 0;
-  transition: left .5s linear;
+  transition: left 0.5s linear;
 }
 .lt-slide-wrap .lt-slide-block-icon {
   width: 50%;
@@ -131,6 +131,9 @@
 }
 .lt-ishorizontal {
   overflow-x: hidden;
+}
+.lt-isvertical {
+  overflow-y: hidden;
 }
 .lt-scroll-moveOn {
   opacity: 1;

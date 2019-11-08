@@ -317,6 +317,7 @@ class scrollbar implements scrollBar {
     scroll_wrap: HTMLElement;
     scroll_bar: HTMLElement;
     scroll_thumb: HTMLElement;
+    hasScroll_x:boolean=false;
     private timer: number | null = null;
     private lastScroll: number = 0;
     private pullTimeer: number | null = null;
@@ -337,6 +338,7 @@ class scrollbar implements scrollBar {
         }
         let contentDom: HTMLElement = document.getElementById(id) as HTMLElement;
         this.content = this.getContent(contentDom)
+        this.hasScroll_x = this.judgeScroll_x(contentDom);
         let { scroll, scroll_bar, scroll_wrap } = this.createBaseDom();
         this.scroll = scroll;
         this.scroll_bar = scroll_bar;
@@ -381,6 +383,19 @@ class scrollbar implements scrollBar {
         let htmlContent: any = dom.innerHTML;
         return htmlContent
     };
+
+    // 判断是否需要水平x轴滚动条
+    judgeScroll_x(dom:HTMLElement):boolean{
+        let result:boolean;
+        let parentWidth:number = dom.parentNode===null?0:(dom.parentNode as HTMLElement).offsetWidth;
+        let domWidth:number = dom.clientWidth;
+        if(domWidth>parentWidth){
+            result = true;
+        }else{
+            result = false;
+        }
+        return result
+    }
 
     // 构建基础布局
     createBaseDom() {
@@ -594,46 +609,4 @@ class scrollbar implements scrollBar {
             }
         })
     }
-}
-
-class scrollbar_x implements scrollBar {
-    originWidth: string | number;
-    id: string;
-    options: scrollOpt;
-    constructor(id: string, options?: scrollOpt){
-        this.originWidth = this.getOriginWidth();
-        this.id = id;
-        if (options) {
-            this.options = options;
-        } else {
-            this.options = { loadMore: false, pullOffset: 0 }
-        }
-    }
-    getOriginWidth():number{
-        let O_width;
-        const outer: HTMLElement = document.createElement('div');
-        outer.style.width = "100px";
-        outer.style.visibility = 'hidden'; //不能用display:none,因为会直接不存在该节点
-        outer.style.position = 'absolute';
-        outer.style.top = '-9999px';
-        outer.style.overflow = "scroll";
-        document.body.appendChild(outer);
-        const inner: HTMLElement = document.createElement('div');
-        inner.style.width = "100%";
-        outer.appendChild(inner);
-        const outer_width: number = outer.offsetWidth;
-        const inner_width: number = inner.offsetWidth;
-        if (outer.parentNode) {
-            outer.parentNode.removeChild(outer)
-        } else {
-            document.body.removeChild(outer)
-        }
-        O_width = outer_width - inner_width;
-        if (O_width === 0) {
-            O_width = 25
-        }
-        return O_width
-    }
-
-
 }
